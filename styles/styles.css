@@ -1,0 +1,1030 @@
+/*
+ * Bauru Serviços - styles.css
+ * Desenvolvido por Lucas Borges
+ *
+ * Este arquivo contém os estilos CSS para o site Bauru Serviços.
+ * Inclui estilos globais, cabeçalho, navegação, formulários,
+ * seções de conteúdo, rodapé e responsividade.
+ */
+
+/* ==================== Reset Básico e Variáveis CSS ==================== */
+:root {
+    --primary-color: #007bff; /* Azul vibrante */
+    --secondary-color: #6c757d; /* Cinza médio */
+    --accent-color: #28a745; /* Verde para destaque/sucesso */
+    --danger-color: #dc3545; /* Vermelho para erro/perigo */
+    --light-bg: #f8f9fa; /* Fundo claro */
+    --dark-bg: #343a40; /* Fundo escuro */
+    --text-color: #333; /* Cor de texto principal */
+    --light-text-color: #666; /* Cor de texto secundária */
+    --white: #fff;
+    --border-color: #ddd;
+    --box-shadow-light: 0 4px 8px rgba(0, 0, 0, 0.1);
+    --transition-speed: 0.3s ease;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box; /* Fundamental para controle de layout */
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    line-height: 1.6;
+    color: var(--text-color);
+    background-color: var(--light-bg);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Garante que o body ocupe a altura total da viewport */
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    width: 100%;
+}
+
+a {
+    color: var(--primary-color);
+    text-decoration: none;
+    transition: color var(--transition-speed);
+}
+
+a:hover {
+    color: #0056b3; /* Tom mais escuro de azul ao passar o mouse */
+}
+
+ul {
+    list-style: none;
+}
+
+/* ==================== Cabeçalho (Header) ==================== */
+header {
+    background-color: var(--primary-color);
+    color: var(--white);
+    padding: 15px 0;
+    box-shadow: var(--box-shadow-light);
+}
+
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    flex-wrap: wrap; /* Permite que os itens quebrem linha em telas pequenas */
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Espaçamento entre logo e h1 */
+}
+
+.logo {
+    height: 50px; /* Altura fixa para o logo */
+    width: auto;
+    border-radius: 5px; /* Levemente arredondado para o logo */
+}
+
+.logo-container h1 {
+    font-size: 1.8em;
+    color: var(--white);
+    margin: 0;
+}
+
+.header-links {
+    display: flex;
+    gap: 25px; /* Espaçamento entre os links de navegação */
+    flex-wrap: wrap; /* Permite que os links quebrem linha */
+    justify-content: center; /* Centraliza os links se eles quebrarem */
+}
+
+.cab-link {
+    color: var(--white);
+    font-weight: bold;
+    font-size: 1.1em;
+    padding: 5px 0;
+    position: relative;
+}
+
+.cab-link::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -5px;
+    left: 0;
+    background-color: var(--white);
+    transition: width var(--transition-speed);
+}
+
+.cab-link:hover::after,
+.cab-link[aria-current="page"]::after { /* Destaque para a página atual */
+    width: 100%;
+}
+
+/* ==================== Main Content e Formulários ==================== */
+main {
+    flex-grow: 1; /* Permite que o main ocupe o espaço restante */
+    padding: 40px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centraliza o conteúdo horizontalmente */
+    overflow-y: auto; /* Permite rolagem vertical se o conteúdo exceder a altura */
+    -webkit-overflow-scrolling: touch; /* Melhora a rolagem em dispositivos iOS */
+    width: 100%; /* Garante que o main ocupe a largura total */
+}
+
+/* Estilo para a página de cadastro (corpo específico) */
+body.cadastro {
+    background-color: var(--light-bg); /* Fundo específico se necessário */
+}
+
+.form-container {
+    background-color: var(--white);
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: var(--box-shadow-light);
+    max-width: 600px; /* Largura máxima para o formulário */
+    width: 95%; /* Ocupa 95% da largura do pai em telas menores */
+    margin: 30px auto; /* Centraliza e adiciona margem vertical */
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Espaçamento entre os grupos do formulário */
+    height: auto; /* Garante que a altura se ajuste ao conteúdo */
+    min-height: fit-content; /* Garante que ele se ajuste ao conteúdo */
+}
+
+.form-container h2 {
+    text-align: center;
+    color: var(--primary-color);
+    margin-bottom: 25px;
+    font-size: 1.8em;
+}
+
+.form-group {
+    margin-bottom: 15px;
+    width: 100%; /* Garante que o form-group ocupe a largura total disponível */
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: var(--light-text-color);
+}
+
+.form-group .required {
+    color: var(--danger-color);
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="number"],
+.form-group input[type="url"],
+.form-group input[type="date"],
+.form-group input[type="password"],
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    font-size: 1em;
+    color: var(--text-color);
+    background-color: var(--white);
+    transition: border-color var(--transition-speed), box-shadow var(--transition-speed);
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+    outline: none;
+}
+
+.form-group textarea {
+    resize: vertical; /* Permite redimensionar verticalmente */
+    min-height: 80px;
+}
+
+/* Estilos para o campo de senha com ícone de toggle */
+.password-container {
+    position: relative;
+    width: 100%;
+}
+
+.password-container input {
+    padding-right: 40px; /* Espaço para o ícone */
+}
+
+.toggle-password {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: var(--secondary-color);
+    font-size: 1.1em;
+    user-select: none; /* Impede seleção do texto */
+}
+
+.password-info {
+    font-size: 0.85em;
+    color: var(--light-text-color);
+    margin-top: 5px;
+    display: block; /* Garante que a mensagem fique em uma nova linha */
+}
+
+/* Checkbox para termos */
+.form-group input[type="checkbox"] {
+    width: auto; /* Desfaz o 100% para checkbox */
+    margin-right: 10px;
+}
+.form-group label[for="aceite_termos"] {
+    display: inline-block; /* Alinha o label com o checkbox */
+    margin-bottom: 0;
+    font-weight: normal;
+}
+
+/* Botões do formulário */
+.form-container button {
+    width: 100%;
+    padding: 12px 20px;
+    background-color: var(--primary-color);
+    color: var(--white);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.1em;
+    margin-top: 10px;
+    transition: background-color var(--transition-speed), transform 0.1s ease;
+}
+
+.form-container button:hover {
+    background-color: #0056b3; /* Tom mais escuro de azul */
+    transform: translateY(-1px);
+}
+
+.form-container button.desativar-btn {
+    background-color: var(--danger-color);
+    margin-top: 15px; /* Mais espaço para o botão de desativar */
+}
+
+.form-container button.desativar-btn:hover {
+    background-color: #c82333; /* Tom mais escuro de vermelho */
+}
+
+.form-container p {
+    text-align: center;
+    margin-top: 15px;
+    font-size: 0.95em;
+}
+
+/* Container para alinhar os botões */
+.form-buttons-container {
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+/* Regra UNIFICADA para AMBOS os links se comportarem como botões idênticos */
+.form-buttons-container .submit-btn,
+.form-buttons-container .cancel-btn {
+    /* Dimensionamento e Espaçamento */
+    flex: 1;
+    box-sizing: border-box; /* Garante que padding não afete a largura final */
+    padding: 12px 20px;
+    border-radius: 5px;
+    border: none;
+    
+    /* Estilos de Fonte e Texto */
+    font-size: 1.1em;
+    font-weight: bold; /* Deixa o texto em negrito */
+    text-align: center;
+    text-decoration: none;
+    line-height: 1.6;
+
+    /* Comportamento e Transição */
+    cursor: pointer;
+    transition: transform 0.1s ease, background-color 0.2s ease;
+}
+
+/* Cor de fundo específica para o botão Entrar (azul) */
+.form-buttons-container .submit-btn {
+    background-color: var(--primary-color);
+    color: var(--white);
+}
+
+.form-buttons-container .submit-btn:hover {
+    background-color: #0056b3;
+    transform: translateY(-1px);
+}
+
+/* Cor de fundo específica para o botão Cancelar */
+.form-buttons-container .cancel-btn {
+    background-color: var(--secondary-color);; /* Usando a variável de cor de perigo/vermelho */
+    color: var(--white);
+}
+
+.form-buttons-container .cancel-btn:hover {
+    background-color: #5a6268;
+    transform: translateY(-1px);
+}
+
+/* Mensagens de feedback (sucesso/erro) */
+.message {
+    padding: 12px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 0.95em;
+    word-wrap: break-word; /* Garante que mensagens longas quebrem linha */
+    width: 100%;
+    max-width: 800px;
+}
+
+
+
+.message.success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.message.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/*mensagem de erro da tela de login*/
+.erro-msg {
+    color: red;
+    font-size: 0.8em;
+    padding: 12px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    text-align: center;
+    font-weight: bold;
+    word-wrap: break-word; /* Garante que mensagens longas quebrem linha */
+    width: 100%;
+    max-width: 800px;
+}
+
+/* --- NOVO: Estilo para o Contador de Profissionais --- */
+.professional-counter {
+    background-color: #e7f3ff;
+    border-left: 5px solid var(--primary-color);
+    padding: 15px 20px;
+    margin-bottom: 30px;
+    border-radius: 5px;
+    text-align: center;
+    width: 100%;
+    max-width: 800px; /* Limita a largura */
+}
+
+.professional-counter p {
+    color: var(--text-color);
+    font-size: 1.05em;
+    margin: 0;
+}
+/* --- FIM DO ESTILO DO CONTADOR --- */
+
+
+/* ==================== Seções de Conteúdo (Index, Sobre, Política) ==================== */
+.categories-section,
+.professionals-section,
+.legal-page,
+.sobre-page,
+.contato-page {
+    width: 100%; /* Garante que as seções ocupem a largura total do container pai */
+    max-width: 1000px; /* Limita a largura do conteúdo principal */
+    margin: 0 auto; /* Centraliza */
+    padding: 20px 0;
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 30px;
+    position: relative; /* Para o botão de voltar */
+}
+
+.section-header h2 {
+    color: var(--primary-color);
+    font-size: 2.2em;
+    margin-bottom: 10px;
+}
+
+.section-header p {
+    color: var(--light-text-color);
+    font-size: 1.1em;
+}
+
+/* Botão Voltar (Back Button) */
+.back-button {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: var(--secondary-color);
+    color: var(--white);
+    padding: 8px 15px;
+    border-radius: 5px;
+    font-size: 0.9em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color var(--transition-speed);
+}
+
+.back-button:hover {
+    background-color: #5a6268;
+}
+
+/* Seção de Busca (Index) */
+#searchForm {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 40px;
+    max-width: 600px;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.search-field {
+    flex-grow: 1;
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    font-size: 1em;
+}
+
+.search-button {
+    background-color: var(--accent-color);
+    color: var(--white);
+    border: none;
+    padding: 12px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color var(--transition-speed);
+}
+
+.search-button:hover {
+    background-color: #218838; /* Tom mais escuro de verde */
+}
+
+/* Grid de Categorias */
+.categories-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Colunas flexíveis */
+    gap: 25px;
+    margin-top: 30px;
+}
+
+.category-card {
+    background-color: var(--white);
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: var(--box-shadow-light);
+    text-decoration: none;
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    text-align: center;
+    transition: transform var(--transition-speed), box-shadow var(--transition-speed), border-color var(--transition-speed);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+}
+
+.category-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    border-color: var(--primary-color);
+}
+
+.category-icon {
+    font-size: 3em;
+    color: var(--primary-color);
+    margin-bottom: 15px;
+}
+
+.category-card h3 {
+    font-size: 1.4em;
+    color: var(--primary-color);
+    margin-bottom: 8px;
+}
+
+.category-card p {
+    color: var(--light-text-color);
+    font-size: 0.95em;
+}
+
+/* Lista de Profissionais */
+.service-list {
+    display: grid;
+    grid-template-columns: 1fr; /* Uma coluna por padrão */
+    gap: 30px;
+    margin-top: 30px;
+}
+
+.service-card {
+    background-color: var(--white);
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: var(--box-shadow-light);
+    display: flex;
+    flex-direction: column;
+    position: relative; /* Para o número do profissional */
+    border-top: 4px solid var(--primary-color);
+}
+
+.professional-number {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background-color: var(--secondary-color);
+    color: var(--white);
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 0.85em;
+    font-weight: bold;
+}
+
+.service-card .card-header {
+    display: flex;
+    align-items: flex-start; /* Alinha o conteúdo ao topo */
+    margin-bottom: 15px;
+    gap: 15px;
+}
+
+.service-card .card-content {
+    flex-grow: 1;
+}
+
+.service-card h2 {
+    font-size: 1.6em;
+    color: var(--primary-color);
+    margin-bottom: 5px;
+}
+
+.service-card h3.highlight {
+    font-size: 1.1em;
+    color: var(--accent-color);
+    margin-bottom: 15px;
+    font-weight: normal;
+}
+
+.service-card p {
+    margin-bottom: 10px;
+    color: var(--light-text-color);
+    font-size: 0.95em;
+}
+
+.service-card strong {
+    color: var(--text-color);
+}
+
+.contact-info {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid var(--border-color);
+}
+
+.contact-info p {
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.whatsapp-button {
+    background-color: #25D366; /* Cor do WhatsApp */
+    color: var(--white);
+    padding: 8px 15px;
+    border-radius: 5px;
+    display: inline-flex; /* Para alinhar ícone e texto */
+    align-items: center;
+    gap: 8px;
+    font-weight: bold;
+    transition: background-color var(--transition-speed);
+}
+
+.whatsapp-button:hover {
+    background-color: #1DA851;
+    color: var(--white);
+}
+
+.contact-info .fab, .contact-info .fas {
+    font-size: 1.1em;
+}
+
+.social-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--secondary-color); /* Cor padrão para links sociais */
+    margin-right: 15px;
+}
+
+.social-link .fab {
+    font-size: 1.2em;
+    color: var(--primary-color); /* Ícone com cor primária */
+}
+
+.social-link:hover .fab {
+    color: #0056b3; /* Cor mais escura no hover */
+}
+
+.no-results {
+    text-align: center;
+    padding: 50px;
+    background-color: var(--white);
+    border-radius: 8px;
+    box-shadow: var(--box-shadow-light);
+    margin-top: 40px;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.no-results .fas {
+    font-size: 3em;
+    color: var(--secondary-color);
+    margin-bottom: 20px;
+}
+
+.no-results h3 {
+    font-size: 1.8em;
+    color: var(--text-color);
+    margin-bottom: 10px;
+}
+
+.no-results p {
+    color: var(--light-text-color);
+    font-size: 1.1em;
+}
+
+/* ==================== Página de Política de Privacidade ==================== */
+.legal-page {
+    background-color: var(--white);
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: var(--box-shadow-light);
+    margin-top: 30px;
+}
+
+.legal-page h2 {
+    text-align: center;
+    color: var(--primary-color);
+    margin-bottom: 25px;
+    font-size: 2.2em;
+}
+
+.legal-page .last-updated {
+    text-align: center;
+    font-style: italic;
+    color: var(--secondary-color);
+    margin-bottom: 30px;
+}
+
+.legal-content h3 {
+    color: var(--primary-color);
+    font-size: 1.5em;
+    margin-top: 25px;
+    margin-bottom: 10px;
+    border-bottom: 2px solid var(--primary-color);
+    padding-bottom: 5px;
+}
+
+.legal-content p {
+    margin-bottom: 15px;
+    line-height: 1.7;
+    text-align: justify;
+}
+
+.legal-content ul {
+    margin-left: 25px;
+    margin-bottom: 15px;
+    list-style: disc; /* Bolinhas padrão para listas */
+}
+
+.legal-content ul li {
+    margin-bottom: 8px;
+}
+
+/* ==================== Rodapé (Footer) - ESTILOS MODIFICADOS ==================== */
+footer {
+    background-color: var(--dark-bg);
+    color: rgba(255, 255, 255, 0.8);
+    padding: 40px 0 0; /* Aumenta o padding superior */
+    margin-top: auto; /* Empurra o rodapé para o final da página */
+    width: 100%;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.footer-grid {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); /* Colunas responsivas */
+    gap: 30px; /* Espaçamento entre as colunas */
+}
+
+.footer-column h4 {
+    color: var(--white);
+    font-size: 1.2em;
+    margin-bottom: 15px;
+    position: relative;
+    padding-bottom: 10px;
+}
+
+.footer-column h4::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 40px;
+    height: 2px;
+    background-color: var(--primary-color);
+}
+
+.footer-column p {
+    margin-bottom: 15px;
+    font-size: 0.95em;
+}
+
+.footer-column ul {
+    padding: 0;
+    list-style: none;
+}
+
+.footer-column ul li {
+    margin-bottom: 10px;
+}
+
+.footer-column ul a {
+    color: rgba(255, 255, 255, 0.8);
+    transition: color var(--transition-speed), padding-left 0.3s ease;
+}
+
+.footer-column ul a:hover {
+    color: var(--white);
+    padding-left: 5px;
+}
+
+.footer-social-icons a {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 1.8em;
+    margin-right: 15px;
+    transition: color var(--transition-speed), transform 0.3s ease;
+}
+
+.footer-social-icons a:hover {
+    color: var(--primary-color);
+    transform: scale(1.1);
+}
+
+.footer-bottom {
+    background-color: rgba(0, 0, 0, 0.2);
+    padding: 15px 20px;
+    margin-top: 30px;
+    text-align: center;
+}
+
+.footer-bottom p {
+    margin: 0;
+    font-size: 0.9em;
+}
+
+.footer-bottom a {
+    color: var(--primary-color);
+    font-weight: bold;
+}
+
+/* ==================== Responsividade (Media Queries) ==================== */
+
+/* Para tablets e telas menores (até 768px) */
+@media (max-width: 768px) {
+    .header-container {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+    }
+
+    .logo-container {
+        justify-content: center;
+        margin-bottom: 10px;
+    }
+
+    .header-links {
+        width: 100%;
+        justify-content: space-around;
+    }
+
+    .form-container {
+        padding: 20px;
+        margin: 20px auto;
+    }
+
+    .form-container h2 {
+        font-size: 1.5em;
+        margin-bottom: 20px;
+    }
+
+    #searchForm {
+        flex-direction: column;
+    }
+    
+    .search-field {
+        width: 100%;
+    }
+
+    .search-button {
+        justify-content: center;
+    }
+
+    .categories-grid {
+        grid-template-columns: 1fr; /* Uma coluna em telas pequenas */
+        gap: 20px;
+    }
+
+    .section-header .back-button {
+        position: static; /* Remove o posicionamento absoluto */
+        transform: none;
+        margin: 0 auto 20px;
+        display: inline-block;
+        text-align: center;
+    }
+
+    .legal-page {
+        padding: 20px;
+    }
+
+    .legal-content h3 {
+        font-size: 1.3em;
+    }
+
+    .footer-grid {
+        text-align: center;
+    }
+
+    .footer-column h4::after {
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .footer-social-icons {
+        justify-content: center;
+        display: flex;
+        gap: 15px;
+    }
+    
+    .footer-social-icons a {
+        margin-right: 0;
+    }
+}
+
+/* Para smartphones (até 480px) */
+@media (max-width: 480px) {
+    body {
+        font-size: 15px;
+    }
+
+    .logo-container h1 {
+        font-size: 1.5em;
+    }
+
+    .header-links {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .cab-link {
+        font-size: 1em;
+    }
+
+    .form-container {
+        padding: 15px;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select,
+    .form-container button {
+        padding: 10px;
+        font-size: 0.95em;
+    }
+
+    .form-container h2 {
+        font-size: 1.3em;
+    }
+
+    .categories-grid {
+        gap: 15px;
+    }
+
+    .category-icon {
+        font-size: 2.5em;
+    }
+
+    .category-card h3 {
+        font-size: 1.2em;
+    }
+
+    .service-card h2 {
+        font-size: 1.4em;
+    }
+
+    .service-card h3.highlight {
+        font-size: 1em;
+    }
+
+    .no-results {
+        padding: 30px;
+    }
+
+    .no-results .fas {
+        font-size: 2.5em;
+        color: var(--secondary-color);
+        margin-bottom: 20px;
+    }
+}
+
+/* Estilos específicos para a página Sobre (sobre.php) */
+main.sobre-page section {
+    background-color: #fff;
+    padding: 10px;
+    max-width: 900px;
+    margin: 0 auto;
+    margin-top: 10px;
+    margin-bottom: 50px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+main.sobre-page h2 {
+    font-size: 2rem;
+    color: var(--primary-color);
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+main.sobre-page p {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+}
+
+main.sobre-page ul {
+    list-style-type: none;
+    padding-left: 0;
+    margin-bottom: 20px;
+}
+
+main.sobre-page ul li {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+    padding-left: 20px;
+    position: relative;
+}
+
+main.sobre-page ul li::before {
+    content: "✔";
+    position: absolute;
+    left: 0;
+    color: var(--secondary-color);
+}
+
+/* Responsividade para a página Sobre */
+@media (max-width: 768px) {
+    main.sobre-page section {
+        padding: 20px;
+    }
+
+    main.sobre-page h2 {
+        font-size: 1.8rem;
+    }
+
+    main.sobre-page p {
+        font-size: 1rem;
+    }
+
+    main.sobre-page ul li {
+        font-size: 1rem;
+    }
+}
