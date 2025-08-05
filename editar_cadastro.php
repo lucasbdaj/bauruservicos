@@ -52,16 +52,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['atualizar_perfil'])) {
     }
 
     // Coleta e sanitização de TODOS os dados do perfil
-    $nome_profissional = filter_input(INPUT_POST, 'nome_profissional', FILTER_SANITIZE_STRING);
-    $id_profissao = filter_input(INPUT_POST, 'id_profissao', FILTER_SANITIZE_NUMBER_INT);
-    $data_nascimento = filter_input(INPUT_POST, 'data_nascimento', FILTER_SANITIZE_STRING);
-    $tempo_profissao = filter_input(INPUT_POST, 'tempo_profissao', FILTER_SANITIZE_NUMBER_INT);
-    $descricao = filter_input(INPUT_POST, 'descricao', FILTER_SANITIZE_STRING);
+    $nome_profissional = filter_input(INPUT_POST, 'nome_profissional', FILTER_UNSAFE_RAW, FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
+    $id_profissao = filter_input(INPUT_POST, 'id_profissao', FILTER_VALIDATE_INT);
+    $data_nascimento = filter_input(INPUT_POST, 'data_nascimento', FILTER_UNSAFE_RAW));
+    $tempo_profissao = filter_input(INPUT_POST, 'tempo_profissao', FILTER_VALIDATE_INT);
+    $descricao = filter_input(INPUT_POST, 'descricao', FILTER_UNSAFE_RAW, FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
     $telefone = preg_replace('/\D/', '', $_POST['telefone']);
-    $rede_social = filter_input(INPUT_POST, 'rede_social', FILTER_SANITIZE_URL);
-    $link_google = filter_input(INPUT_POST, 'link_google', FILTER_SANITIZE_URL);
-    $site_prestador = filter_input(INPUT_POST, 'site_prestador', FILTER_SANITIZE_URL);
-    $endereco = filter_input(INPUT_POST, 'endereco', FILTER_SANITIZE_STRING);
+    $rede_social = filter_input(INPUT_POST, 'rede_social', FILTER_VALIDATE_URL);
+    $link_google = filter_input(INPUT_POST, 'link_google', FILTER_VALIDATE_URL);
+    $site_prestador = filter_input(INPUT_POST, 'site_prestador', FILTER_VALIDATE_URL);
+    $endereco = filter_input(INPUT_POST, 'endereco', FILTER_UNSAFE_RAW, FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
     $presta_servico_endereco = isset($_POST['servicos_endereco']) ? 'S' : 'N';
 
     // Preparar e executar a atualização no banco de dados

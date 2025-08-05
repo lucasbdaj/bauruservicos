@@ -1,15 +1,17 @@
 <?php
+session_start(); // Inicia a sessão para mensagens de feedback
+
 require_once __DIR__ . "/config/db_connection.php";
 require_once __DIR__ . "/logic/helpers.php"; // Contém renderSocialLink()
 require_once __DIR__ . "/logic/fetch_profissionais.php"; // Lógica para buscar profissionais/categorias
 
-session_start(); // Inicia a sessão para mensagens de feedback
 $message_type = $_SESSION['message_type'] ?? '';
 $message_content = $_SESSION['message_content'] ?? '';
 unset($_SESSION['message_type'], $_SESSION['message_content']); // Limpa a sessão
 
 // Sanitização e validação das entradas
-$search = filter_input(INPUT_GET, 'search', FILTER_SANITIZE_STRING);
+$search = $_GET['search'] ??'';
+$search = strip_tags(trim($search));
 $selectedProfissao = filter_input(INPUT_GET, 'profissao', FILTER_SANITIZE_NUMBER_INT);
 
 // --- CORREÇÃO: Lógica para contar profissionais ativos ---

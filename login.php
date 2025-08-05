@@ -1,10 +1,9 @@
-<?php
+<?php // Iniciar a sessão
+session_start();
+
 // Inclua a conexão com o banco de dados
 require_once __DIR__ . "/config/db_connection.php";
 require_once __DIR__ . "/logic/csrf_token.php";
-
-// Iniciar a sessão
-session_start();
 
 $csrf_token = generateCSRFToken();
 

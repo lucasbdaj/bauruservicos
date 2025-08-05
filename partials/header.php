@@ -1,8 +1,6 @@
 <?php
+require_once __DIR__ . '/../session.php';
 // Garante que a sessão seja iniciada em todas as páginas que incluem este header.
-if (session_status() == PHP_SESSION_NONE) {
-    session_start();
-}
 
 $is_logged_in = isset($_SESSION['id_profissional']);
 $nome_usuario = '';

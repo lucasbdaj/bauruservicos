@@ -87,7 +87,7 @@ function getPrestadoresBusca($conn, $search) {
 }
 
 // Processar dados do front-end
-$search = filter_input(INPUT_GET, 'search', FILTER_SANITIZE_STRING) ?? '';
+$search = filter_input(INPUT_GET, 'search', FILTER_DEFAULT) ?? '';
 $selectedProfissao = filter_input(INPUT_GET, 'profissao', FILTER_VALIDATE_INT) ?? '';
 
 // Determinar o modo de exibição
@@ -99,14 +99,16 @@ if ($showCategories) {
     // Mostrar categorias
     $profissoesResult = getProfissoesComContagem($conn);
     if (!$profissoesResult) {
-        die("Erro ao buscar profissões.");
+        $fetch_error = "Erro ao buscar profissões.";
+        $profissoesResult = null;
     }
     $result = null;
 } else if (!empty($selectedProfissao)) {
     // Mostrar profissionais de uma categoria específica
     $result = getPrestadoresPorCategoria($conn, $selectedProfissao);
     if (!$result) {
-        die("Erro ao buscar prestadores de serviço.");
+        $fetch_error = "Erro ao buscar prestadores de serviço";
+        $result = null;
     }
     $profissoesResult = null;
 } else if (!empty($search)) {

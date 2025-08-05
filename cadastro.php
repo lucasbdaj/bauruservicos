@@ -1,9 +1,9 @@
 <?php
+session_start();
+
 require_once __DIR__ . "/config/db_connection.php";
 // require_once __DIR__ . "/logic/fetch_cadastro.php"; // Removida, pois não parece necessária ou pode causar output indesejado.
 require_once __DIR__ . "/logic/csrf_token.php";
-
-session_start();
 
 $csrf_token = generateCSRFToken();
 
