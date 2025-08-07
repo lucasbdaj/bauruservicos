@@ -1,8 +1,8 @@
 <?php
+session_start();
+
 require_once __DIR__ . "/config/db_connection.php";
 require_once __DIR__ . "/logic/csrf_token.php";
-
-session_start();
 
 // Função para exibir mensagens de erro/sucesso e redirecionar
 function redirectWithMessage($type, $message, $location) {
@@ -24,17 +24,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Coletar e sanitizar dados do formulário
-    $nome_profissional = filter_input(INPUT_POST, 'nome_profissional', FILTER_SANITIZE_STRING);
+    $nome_profissional = filter_input(INPUT_POST, 'nome_profissional', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     $id_profissao = filter_input(INPUT_POST, 'id_profissao', FILTER_SANITIZE_NUMBER_INT); // Sanitizar como INT
-    $data_nascimento = filter_input(INPUT_POST, 'data_nascimento', FILTER_SANITIZE_STRING);
+    $data_nascimento = filter_input(INPUT_POST, 'data_nascimento', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     $tempo_profissao = filter_input(INPUT_POST, 'tempo_profissao', FILTER_SANITIZE_NUMBER_INT); // Sanitizar como INT
-    $descricao = filter_input(INPUT_POST, 'descricao', FILTER_SANITIZE_STRING);
+    $descricao = filter_input(INPUT_POST, 'descricao', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     $telefone = preg_replace('/\D/', '', $_POST['telefone']); // Remove tudo que não for dígito
     $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
     $rede_social = filter_input(INPUT_POST, 'rede_social', FILTER_SANITIZE_URL);
     $link_google = filter_input(INPUT_POST, 'link_google', FILTER_SANITIZE_URL);
     $site_prestador = filter_input(INPUT_POST, 'site_prestador', FILTER_SANITIZE_URL);
-    $endereco = filter_input(INPUT_POST, 'endereco', FILTER_SANITIZE_STRING);
+    $endereco = filter_input(INPUT_POST, 'endereco', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     $servicos_endereco = isset($_POST['servicos_endereco']) ? 'S' : 'N';
     $senha = $_POST['senha'];
     $confirmar_senha = $_POST['confirmar_senha'];
@@ -72,15 +72,35 @@ if (!preg_match("/^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+|~=`{}\[\]:'\";<>?,.\
     // Ajustado bind_param: 'i' para id_profissao e tempo_profissao
     $stmt->bind_param("sisisssssssss", $nome_profissional, $id_profissao, $data_nascimento, $tempo_profissao, $descricao, $telefone, $email, $rede_social, $link_google, $site_prestador, $endereco, $servicos_endereco, $senha_hash);
 
-    if ($stmt->execute()) {
-        redirectWithMessage('success', 'Prestador de serviço cadastrado com sucesso!', 'index.php');
-    } else {
-        // Captura o erro do banco de dados para depuração, mas não exibe para o usuário final
-        error_log("Erro ao cadastrar profissional: " . $stmt->error);
-        redirectWithMessage('error', 'Erro ao cadastrar. Tente novamente.', 'cadastro.php');
-    }
-
-    $stmt->close();
+    // if ($stmt->execute()) {
+    //     redirectWithMessage('success', 'Prestador de serviço cadastrado com sucesso!', 'index.php');
+    // } else {
+    //     // Captura o erro do banco de dados para depuração, mas não exibe para o usuário final
+    //     error_log("Erro ao cadastrar profissional: " . $stmt->error);
+    //     redirectWithMessage('error', 'Erro ao cadastrar. Tente novamente.', 'cadastro.php');
+    // }
+    try {
+        if ($stmt->execute()) {
+            $stmt->close();
+            redirectWithMessage('success', 'Prestador de serviço cadastrado com sucesso!', 'index.php');
+        } else {
+            $stmt->close();
+            // Este bloco raramente será alcançado, pois exceções são lançadas em caso de erro
+            redirectWithMessage('error', 'Erro ao cadastrar. Tente novamente.', 'cadastro.php');
+        }
+    } catch (mysqli_sql_exception $e) {
+        $stmt->close();
+        error_log("Erro ao cadastrar profissional: " . $e->getMessage());
+    
+        // Verifica se a mensagem de erro indica duplicidade de telefone
+        if (str_contains($e->getMessage(), 'telefone')) {
+            redirectWithMessage('error', 'O telefone informado já está cadastrado para outro profissional.', 'cadastro.php');
+        } elseif (str_contains($e->getMessage(), 'email')) {
+            redirectWithMessage('error', 'O e-mail informado já está cadastrado para outro profissional.', 'cadastro.php');
+        } else {
+            redirectWithMessage('error', 'Erro ao cadastrar. Verifique os dados informados.', 'cadastro.php');
+        }
+    }    
 } else {
     // Redireciona se a requisição não for POST
     header("Location: cadastro.php");

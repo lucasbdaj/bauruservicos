@@ -13,14 +13,16 @@ RUN apt-get update && apt-get install -y \
 # Ativando mod_rewrite do Apache
 RUN a2enmod rewrite
 
-WORKDIR /var/www/html
+WORKDIR /var/www/html/bauruservicos
 
-# Copiando o arquivo de configuração do Apache
-# COPY docker/apache-config.conf /etc/apache2/sites-available/000-default.conf
-COPY . /var/www/html
+# Copiando os arquivos da aplicação
+COPY . /var/www/html/bauruservicos
+
+# Copiar o script para esperar o MySQL
+COPY docker/wait-for-it.sh /wait-for-it.sh
+RUN chmod +x /wait-for-it.sh
 
 EXPOSE 80
 
-CMD ["apache2-foreground"]
-# Reiniciando o Apache
-# RUN service apache2 restart
+# Comando para esperar o MySQL e só depois iniciar o Apache
+CMD ["/wait-for-it.sh", "mysql:3306", "--", "apache2-foreground"]
