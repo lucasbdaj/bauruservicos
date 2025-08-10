@@ -23,10 +23,15 @@ services:
       MYSQL_DATABASE: bauru2971415_servicosbauru
       MYSQL_USER: user
       MYSQL_PASSWORD: password
+      MYSQL_AUTHENTICATION_PLUGIN: mysql_native_password
+    command: --default-authentication-plugin=mysql_native_password
     ports:
       - "3306:3306"
     volumes:
+      # Volume persistente para salvar os dados do banco
       - mysql_data:/var/lib/mysql
+      # Script inicial para popular o banco (roda só na primeira vez)
+      # - ./docker/banco.sql:/docker-entrypoint-initdb.d/banco.sql
       - ../banco.sql:/docker-entrypoint-initdb.d/init.sql
 
   phpmyadmin:
