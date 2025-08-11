@@ -54,7 +54,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['atualizar_perfil'])) {
     // Coleta e sanitização de TODOS os dados do perfil
     $nome_profissional = filter_input(INPUT_POST, 'nome_profissional', FILTER_UNSAFE_RAW, FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
     $id_profissao = filter_input(INPUT_POST, 'id_profissao', FILTER_VALIDATE_INT);
-    $data_nascimento = filter_input(INPUT_POST, 'data_nascimento', FILTER_UNSAFE_RAW));
+    $data_nascimento = filter_input(INPUT_POST, 'data_nascimento', FILTER_UNSAFE_RAW);
     $tempo_profissao = filter_input(INPUT_POST, 'tempo_profissao', FILTER_VALIDATE_INT);
     $descricao = filter_input(INPUT_POST, 'descricao', FILTER_UNSAFE_RAW, FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
     $telefone = preg_replace('/\D/', '', $_POST['telefone']);
