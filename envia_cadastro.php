@@ -28,7 +28,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $id_profissao = filter_input(INPUT_POST, 'id_profissao', FILTER_SANITIZE_NUMBER_INT); // Sanitizar como INT
     $data_nascimento = filter_input(INPUT_POST, 'data_nascimento', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     $tempo_profissao = filter_input(INPUT_POST, 'tempo_profissao', FILTER_SANITIZE_NUMBER_INT); // Sanitizar como INT
-    $descricao = filter_input(INPUT_POST, 'descricao', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+    $descricao = filter_input(INPUT_POST, 'descricao', FILTER_SANITIZE_STRING);
     $telefone = preg_replace('/\D/', '', $_POST['telefone']); // Remove tudo que não for dígito
     $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
     $rede_social = filter_input(INPUT_POST, 'rede_social', FILTER_SANITIZE_URL);
@@ -40,7 +40,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $confirmar_senha = $_POST['confirmar_senha'];
 
     // Validações
-    if (empty($nome_profissional) || empty($id_profissao) || empty($data_nascimento) || empty($tempo_profissao) || empty($descricao) || empty($telefone) || empty($servicos_endereco) || empty($senha) || empty($confirmar_senha)) {
+    if (empty($nome_profissional) || empty($id_profissao) || empty($data_nascimento) || empty($tempo_profissao) || empty($descricao) || empty($telefone) || empty($senha) || empty($confirmar_senha)) {
         redirectWithMessage('error', 'Por favor, preencha todos os campos obrigatórios.', 'cadastro.php');
     }
 

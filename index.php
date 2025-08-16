@@ -77,12 +77,12 @@ if (isset($conn)) {
                         if (isset($profissoesResult) && $profissoesResult->num_rows > 0) {
                             while ($row = $profissoesResult->fetch_assoc()) {
                                 echo "<a href='index.php?profissao=" . htmlspecialchars($row['id_profissao']) . "' class='category-card'>
-                                        <div class='category-icon'>
-                                            <i class='fas fa-tools'></i>
-                                        </div>
-                                        <h3>" . htmlspecialchars($row['nome_profissao']) . "</h3>
-                                        <p>" . htmlspecialchars($row['total_profissionais']) . " profissional" . ($row['total_profissionais'] > 1 ? 'is' : '') . " disponível" . ($row['total_profissionais'] > 1 ? 'is' : '') . "</p>
-                                      </a>";
+                                    <div class='category-icon'>
+                                        <i class='fas fa-tools'></i>
+                                    </div>
+                                    <h3>" . htmlspecialchars($row['nome_profissao']) . "</h3>
+                                    <p>" . htmlspecialchars($row['total_profissionais']) . " profissiona" . ($row['total_profissionais'] > 1 ? 'is' : 'l') . " disponível" . ($row['total_profissionais'] > 1 ? 'is' : '') . "</p>
+                                </a>";
                             }
                         } else {
                             echo "<p>Nenhuma categoria encontrada ou não há profissionais ativos.</p>";
