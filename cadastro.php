@@ -2,7 +2,6 @@
 session_start();
 
 require_once __DIR__ . "/config/db_connection.php";
-// require_once __DIR__ . "/logic/fetch_cadastro.php"; // Removida, pois não parece necessária ou pode causar output indesejado.
 require_once __DIR__ . "/logic/csrf_token.php";
 
 $csrf_token = generateCSRFToken();
@@ -39,7 +38,7 @@ unset($_SESSION['message_type'], $_SESSION['message_content']);
                 </p>
             <?php endif; ?>
 
-            <form action="envia_cadastro.php" method="POST" id ="cadForm">
+            <form action="process/envia_cadastro.php" method="POST" id ="cadForm">
             <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
             <div class="form-group">
             <label for="nome_profissional">

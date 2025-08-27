@@ -1,8 +1,8 @@
 <?php
 session_start();
 
-require_once __DIR__ . "/config/db_connection.php";
-require_once __DIR__ . "/logic/csrf_token.php";
+require_once __DIR__ . "/../config/db_connection.php";
+require_once __DIR__ . "/../logic/csrf_token.php";
 
 // Função para exibir mensagens de erro/sucesso e redirecionar
 function redirectWithMessage($type, $message, $location) {
@@ -15,12 +15,12 @@ function redirectWithMessage($type, $message, $location) {
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Validar CSRF token
     if (!isset($_POST["csrf_token"]) || !validateCSRFToken($_POST["csrf_token"])) {
-        redirectWithMessage('error', 'Erro de segurança: Token CSRF inválido.', 'cadastro.php');
+        redirectWithMessage('error', 'Erro de segurança: Token CSRF inválido.', '../cadastro.php');
     }
 
     // Verificar se o checkbox de aceite de termos foi marcado
     if (!isset($_POST["aceite_termos"])) {
-        redirectWithMessage('error', 'Você deve aceitar os Termos de Uso e Política de Privacidade para se cadastrar!', 'cadastro.php');
+        redirectWithMessage('error', 'Você deve aceitar os Termos de Uso e Política de Privacidade para se cadastrar!', '../cadastro.php');
     }
 
     // Coletar e sanitizar dados do formulário
@@ -41,24 +41,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Validações
     if (empty($nome_profissional) || empty($id_profissao) || empty($data_nascimento) || empty($tempo_profissao) || empty($descricao) || empty($telefone) || empty($senha) || empty($confirmar_senha)) {
-        redirectWithMessage('error', 'Por favor, preencha todos os campos obrigatórios.', 'cadastro.php');
+        redirectWithMessage('error', 'Por favor, preencha todos os campos obrigatórios.', '../cadastro.php');
     }
 
     if (!filter_var($email, FILTER_VALIDATE_EMAIL) && !empty($email)) { // Email é opcional, mas se preenchido, deve ser válido
-        redirectWithMessage('error', 'Formato de e-mail inválido.', 'cadastro.php');
+        redirectWithMessage('error', 'Formato de e-mail inválido.', '../cadastro.php');
     }
 
     if (!preg_match("/^\d{10,11}$/", $telefone)) {
-        redirectWithMessage('error', 'Formato de telefone inválido. Deve conter 10 ou 11 dígitos numéricos.', 'cadastro.php');
+        redirectWithMessage('error', 'Formato de telefone inválido. Deve conter 10 ou 11 dígitos numéricos.', '../cadastro.php');
     }
 
     if ($senha !== $confirmar_senha) {
-        redirectWithMessage('error', 'As senhas não coincidem!', 'cadastro.php');
+        redirectWithMessage('error', 'As senhas não coincidem!', '../cadastro.php');
     }
 
     // Validar a força da senha (mínimo 8 caracteres, com letras, números e caracteres especiais)
 if (!preg_match("/^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+|~=`{}\[\]:'\";<>?,.\/-]).{8,}$/", $senha)) {
-    redirectWithMessage('error', 'A senha é fraca. A senha deve ter pelo menos 8 caracteres, incluindo uma letra, números e um caractere especial (@, #, $, %, etc.).', 'cadastro.php');
+    redirectWithMessage('error', 'A senha é fraca. A senha deve ter pelo menos 8 caracteres, incluindo uma letra, números e um caractere especial (@, #, $, %, etc.).', '../cadastro.php');
 }
 
     // Gerar hash da senha
@@ -72,21 +72,14 @@ if (!preg_match("/^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+|~=`{}\[\]:'\";<>?,.\
     // Ajustado bind_param: 'i' para id_profissao e tempo_profissao
     $stmt->bind_param("sisisssssssss", $nome_profissional, $id_profissao, $data_nascimento, $tempo_profissao, $descricao, $telefone, $email, $rede_social, $link_google, $site_prestador, $endereco, $servicos_endereco, $senha_hash);
 
-    // if ($stmt->execute()) {
-    //     redirectWithMessage('success', 'Prestador de serviço cadastrado com sucesso!', 'index.php');
-    // } else {
-    //     // Captura o erro do banco de dados para depuração, mas não exibe para o usuário final
-    //     error_log("Erro ao cadastrar profissional: " . $stmt->error);
-    //     redirectWithMessage('error', 'Erro ao cadastrar. Tente novamente.', 'cadastro.php');
-    // }
     try {
         if ($stmt->execute()) {
             $stmt->close();
-            redirectWithMessage('success', 'Prestador de serviço cadastrado com sucesso!', 'index.php');
+            redirectWithMessage('success', 'Prestador de serviço cadastrado com sucesso!', '../index.php');
         } else {
             $stmt->close();
             // Este bloco raramente será alcançado, pois exceções são lançadas em caso de erro
-            redirectWithMessage('error', 'Erro ao cadastrar. Tente novamente.', 'cadastro.php');
+            redirectWithMessage('error', 'Erro ao cadastrar. Tente novamente.', '../cadastro.php');
         }
     } catch (mysqli_sql_exception $e) {
         $stmt->close();
@@ -94,16 +87,16 @@ if (!preg_match("/^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+|~=`{}\[\]:'\";<>?,.\
     
         // Verifica se a mensagem de erro indica duplicidade de telefone
         if (str_contains($e->getMessage(), 'telefone')) {
-            redirectWithMessage('error', 'O telefone informado já está cadastrado para outro profissional.', 'cadastro.php');
+            redirectWithMessage('error', 'O telefone informado já está cadastrado para outro profissional.', '../cadastro.php');
         } elseif (str_contains($e->getMessage(), 'email')) {
-            redirectWithMessage('error', 'O e-mail informado já está cadastrado para outro profissional.', 'cadastro.php');
+            redirectWithMessage('error', 'O e-mail informado já está cadastrado para outro profissional.', '../cadastro.php');
         } else {
-            redirectWithMessage('error', 'Erro ao cadastrar. Verifique os dados informados.', 'cadastro.php');
+            redirectWithMessage('error', 'Erro ao cadastrar. Verifique os dados informados.', '../cadastro.php');
         }
     }    
 } else {
     // Redireciona se a requisição não for POST
-    header("Location: cadastro.php");
+    header("Location: ../cadastro.php");
     exit();
 }
 $conn->close();
