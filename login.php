@@ -123,7 +123,7 @@ if (isset($_POST["login"])) {
                 <div class="form-group">
                     <label for="email_login">E-mail:</label>
                     <input type="email" id="email_login" name="email_login" placeholder="Digite seu e-mail" >
-                    <span id="erro_email" class='erro-msg"></span>
+                    <span id="erro_email" class='erro-msg'></span>
                 </div>
 
                 <div class="form-group">
@@ -131,8 +131,9 @@ if (isset($_POST["login"])) {
                     <div class="password-container">
                         <input type="password" id="senha_login" name="senha_login" placeholder="Digite sua senha">
                         <span class="toggle-password" onclick="togglePassword('senha_login')">👁️</span>
+                        <span id="erro_senha" class='erro-msg'></span>
                     </div>
-                    <span id="erro_senha" class='erro-msg"></span>
+                    
                 </div>
                 
                 <div class="form-buttons-container">
