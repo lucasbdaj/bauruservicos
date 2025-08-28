@@ -1,6 +1,5 @@
 <?php
-require_once __DIR__ . "/config/db_connection.php";
-session_start();
+require_once __DIR__ . '/bootstrap.php';
 
 // Verificar se o usuário está logado
 if (!isset($_SESSION['id_profissional'])) {
@@ -59,15 +58,5 @@ if (!isset($_SESSION['id_profissional'])) {
     </main>
 
     <?php require_once __DIR__ . "/partials/footer.php"; ?>
-
-    <style>
-        .management-options { margin-top: 20px; display: flex; flex-direction: column; gap: 15px; }
-        .management-link { display: flex; align-items: center; gap: 20px; padding: 20px; background-color: var(--light-bg); border-radius: 8px; text-decoration: none; color: var(--text-color); transition: background-color 0.3s, transform 0.2s; border-left: 5px solid var(--primary-color); }
-        .management-link:hover { background-color: #e9ecef; transform: translateX(5px); }
-        .management-link i { font-size: 2em; color: var(--primary-color); width: 40px; text-align: center; }
-        .management-link div { display: flex; flex-direction: column; }
-        .management-link span { font-size: 1.2em; font-weight: bold; }
-        .management-link small { color: var(--light-text-color); }
-    </style>
 </body>
 </html>

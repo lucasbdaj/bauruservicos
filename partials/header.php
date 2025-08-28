@@ -1,36 +1,3 @@
-<?php
-require_once __DIR__ . '/../session.php';
-// Garante que a sessão seja iniciada em todas as páginas que incluem este header.
-
-$is_logged_in = isset($_SESSION['id_profissional']);
-$nome_usuario = '';
-
-// Se o usuário estiver logado, busca o nome dele no banco de dados.
-if ($is_logged_in) {
-    // Inclui a conexão com o banco de dados apenas se for necessário.
-    require_once __DIR__ . "/../config/db_connection.php";
-    
-    $id_profissional = $_SESSION['id_profissional'];
-    $sql = "SELECT nome_profissional FROM profissional WHERE id_profissional = ?";
-    $stmt = $conn->prepare($sql);
-    
-    if ($stmt) {
-        $stmt->bind_param("i", $id_profissional);
-        $stmt->execute();
-        
-        // CORREÇÃO: Renomear a variável de $result para $header_user_result
-        $header_user_result = $stmt->get_result();
-        
-        if ($header_user_result->num_rows > 0) {
-            $user = $header_user_result->fetch_assoc();
-            $nome_usuario = strtok($user['nome_profissional'], ' '); 
-        }
-        $stmt->close();
-    }
-}
-?>
-
-<!DOCTYPE html>
 <header>
     <div class="header-container">
         <a href="index.php" class="logo-container">
@@ -42,10 +9,9 @@ if ($is_logged_in) {
             <a href="sobre.php" class="cab-link">Sobre</a>
             <a href="contato.php" class="cab-link">Contato</a>
 
-            <?php if ($is_logged_in): ?>
+            <?php if (($is_logged_in) && isset ($user_info)): ?>
                 <div class="user-menu-container">
-                    <a href="gerenciar.php" class="user-name"> Olá, <?php echo htmlspecialchars($nome_usuario); ?> &#9662;
-                    </a>
+                    <a href="gerenciar.php" class="user-name"> Olá, <?php echo htmlspecialchars($user_info['primeiro_nome']); ?> &#9662;</a>
                     <div class="dropdown-content">
                         <a href="gerenciar.php">Gerenciar</a>
                         <a href="editar_cadastro.php">Editar cadastro</a>

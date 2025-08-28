@@ -1,8 +1,6 @@
 <?php
 // Caminhos corrigidos com a adição de "/"
-require_once __DIR__ . "/config/db_connection.php";
-require_once __DIR__ . "/logic/csrf_token.php";
-session_start();
+require_once __DIR__ . '/bootstrap.php';
 
 // Verificar login (o caminho do Location já estava correto)
 if (!isset($_SESSION['id_profissional'])) {
@@ -123,15 +121,3 @@ $stmt_get_email->close();
         </div>
     </main>
     <?php require_once __DIR__ . "/partials/footer.php"; $conn->close(); ?>
-
-    <script>
-    // Função para exibir/ocultar a senha
-    function togglePassword(id) {
-        var passwordField = document.getElementById(id);
-        var type = passwordField.type === "password" ? "text" : "password";
-        passwordField.type = type;
-    }
-    </script>
-
-</body>
-</html>

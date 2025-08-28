@@ -23,7 +23,9 @@ function getProfissoesComContagem($conn) {
         $statusAtivo = STATUS_ATIVO;
         $stmt->bind_param("s", $statusAtivo);
         $stmt->execute();
-        return $stmt->get_result();
+        $result = $stmt->get_result();
+        $stmt->close();
+        return $result;;
     } else {
         error_log("Erro na preparação da consulta de profissões: " . $conn->error);
         return false;
@@ -50,7 +52,9 @@ function getPrestadoresPorCategoria($conn, $idProfissao) {
         $statusAtivo = STATUS_ATIVO;
         $stmt->bind_param("si", $statusAtivo, $idProfissao);
         $stmt->execute();
-        return $stmt->get_result();
+        $result = $stmt->get_result();
+        $stmt->close();
+        return $result;;
     } else {
         error_log("Erro na preparação da consulta de prestadores por categoria: " . $conn->error);
         return false;
@@ -79,7 +83,9 @@ function getPrestadoresBusca($conn, $search) {
         $searchTerm = "%" . $search . "%";
         $stmt->bind_param("sss", $statusAtivo, $searchTerm, $searchTerm);
         $stmt->execute();
-        return $stmt->get_result();
+        $result = $stmt->get_result();
+        $stmt->close();
+        return $result;;
     } else {
         error_log("Erro na preparação da consulta de prestadores: " . $conn->error);
         return false;
@@ -118,10 +124,5 @@ if ($showCategories) {
         die("Erro ao buscar prestadores de serviço.");
     }
     $profissoesResult = null;
-}
-
-// Fechar statement, se existir
-if (isset($stmt)) {
-    $stmt->close();
 }
 ?>

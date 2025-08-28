@@ -1,8 +1,5 @@
 <?php
-// 
-require_once __DIR__ . "/config/db_connection.php";
-require_once __DIR__ . "/logic/csrf_token.php";
-session_start();
+require_once __DIR__ . '/bootstrap.php';
 
 // Verificar login
 if (!isset($_SESSION['id_profissional'])) {
@@ -40,7 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt_pass->close();
 
     if (!$user_data || !password_verify($senha_atual, $user_data['senha'])) {
-        $_SESSION['message_type'] = 'error'; $_SESSION['message_content'] = 'Senha atual incorreta!'; header("Location: alterar_senha.php"); exit();
+        redirectWithMessage('error', 'Senha atual incorreta!', 'alterar_senha.php');
     }
 
     // 2. Validar a nova senha
@@ -80,7 +77,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <head>
     <meta charset="UTF-8">
     <title>Alterar senha - Bauru Serviços</title>
-    <link rel="stylesheet" href="/styles/styles.css">
+    <link rel="stylesheet" href="styles/styles.css">
 </head>
 <body>
     <?php require_once __DIR__ . "/partials/header.php"; ?>
@@ -127,15 +124,3 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
     </main>
     <?php require_once __DIR__ . "/partials/footer.php"; $conn->close(); ?>
-
-    <script>
-        function togglePassword(id) {
-            var passwordField = document.getElementById(id);
-            if (passwordField) {
-                var type = passwordField.type === "password" ? "text" : "password";
-                passwordField.type = type;
-            }
-        }
-    </script>
-</body>
-</html>

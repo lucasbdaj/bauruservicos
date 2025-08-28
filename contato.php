@@ -1,5 +1,5 @@
 <?php
-session_start(); // Inicia a sessão para mensagens de feedback
+require_once __DIR__ . '/bootstrap.php';
 
 // Captura e limpa mensagens de feedback
 $status = $_SESSION['message_type'] ?? '';

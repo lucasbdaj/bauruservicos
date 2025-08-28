@@ -1,7 +1,5 @@
 <?php
-require_once __DIR__ . "/config/db_connection.php";
-require_once __DIR__ . "/logic/csrf_token.php";
-session_start();
+require_once __DIR__ . '/bootstrap.php';
 
 // 1. Verificar se o usuário está logado
 if (!isset($_SESSION['id_profissional'])) {
@@ -254,33 +252,9 @@ if (!$dados_profissional) {
         </div>
     </main>
     <?php require_once __DIR__ . "/partials/footer.php"; ?>
-    <script>
-        // Função para exibir/ocultar a senha
-        function togglePassword(id) {
-            var passwordField = document.getElementById(id);
-            var type = passwordField.type === "password" ? "text" : "password";
-            passwordField.type = type;
-        }
-
-        // Script para máscara de telefone (opcional, mas recomendado)
-        document.addEventListener('DOMContentLoaded', function() {
-            var telefoneInput = document.getElementById('telefone');
-            if (telefoneInput) {
-                const formatPhone = (value) => {
-                    const x = value.replace(/\D/g, '').match(/(\d{0,2})(\d{0,5})(\d{0,4})/);
-                    return !x[2] ? x[1] : '(' + x[1] + ') ' + x[2] + (x[3] ? '-' + x[3] : '');
-                };
-                telefoneInput.value = formatPhone(telefoneInput.value);
-                telefoneInput.addEventListener('input', (e) => {
-                    e.target.value = formatPhone(e.target.value);
-                });
-            }
-        });
-    </script>
+    
     <?php
     if (isset($conn)) {
         $conn->close();
     }
     ?>
-</body>
-</html>

@@ -1,7 +1,5 @@
 <?php
-require_once __DIR__ . "/config/db_connection.php";
-
-session_start(); // Inicia a sessão para usar mensagens de feedback
+require_once __DIR__ . '/bootstrap.php';
 
 // Função para exibir mensagens de erro/sucesso e redirecionar
 function redirectWithMessage($type, $message, $location) {

@@ -1,6 +1,5 @@
 <?php
-require_once __DIR__ . "/config/db_connection.php"; // Mantém para consistência, mesmo que não use BD
-session_start();
+require_once __DIR__ . '/bootstrap.php';
 ?>
 
 <!DOCTYPE html>

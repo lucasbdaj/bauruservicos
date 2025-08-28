@@ -1,9 +1,5 @@
 <?php
-session_start(); // Inicia a sessão para mensagens de feedback
-
-require_once __DIR__ . "/config/db_connection.php";
-require_once __DIR__ . "/logic/helpers.php"; // Contém renderSocialLink()
-require_once __DIR__ . "/logic/fetch_profissionais.php"; // Lógica para buscar profissionais/categorias
+require_once __DIR__ . '/bootstrap.php';
 
 $message_type = $_SESSION['message_type'] ?? '';
 $message_content = $_SESSION['message_content'] ?? '';
@@ -14,20 +10,23 @@ $search = $_GET['search'] ??'';
 $search = strip_tags(trim($search));
 $selectedProfissao = filter_input(INPUT_GET, 'profissao', FILTER_SANITIZE_NUMBER_INT);
 
-// --- CORREÇÃO: Lógica para contar profissionais ativos ---
+// --- Lógica para contar profissionais ativos ---
 $total_profissionais = 0;
 if (isset($conn)) {
-    // CORRIGIDO: O nome da tabela é 'profissional' e a coluna de status é 'ativo' com valor 'S'.
     $sql_total = "SELECT COUNT(id_profissional) as total FROM profissional WHERE ativo = 'S'";
     $result_total = $conn->query($sql_total);
     if ($result_total && $result_total->num_rows > 0) {
         $total_profissionais = $result_total->fetch_assoc()['total'];
     }
 }
+
+// --- CORREÇÃO ADICIONADA AQUI ---
+// Inclui e executa o script que busca os profissionais no banco de dados.
+// Ele usará as variáveis $search e $selectedProfissao que definimos acima
+// e criará as variáveis $showCategories, $profissoesResult e $result para o HTML usar.
+require_once __DIR__ . "/logic/fetch_profissionais.php";
 // --- FIM DA CORREÇÃO ---
 
-// A lógica de fetch_profissionais.php deve popular $showCategories, $profissoesResult, $result
-// Certifique-se que fetch_profissionais.php está usando $conn para suas queries e fechando statements.
 ?>
 
 <!DOCTYPE html>
@@ -59,6 +58,10 @@ if (isset($conn)) {
                     <?php echo htmlspecialchars($message_content); ?>
                 </p>
             <?php endif; ?>
+
+            <div class="professional-counter">
+                <p>Atualmente, temos <strong><?php echo $total_profissionais; ?></strong> profissionais ativos na plataforma!</p>
+            </div>
             <form method="get" action="index.php" id="searchForm">
                 <input type="text" name="search" id="searchInput" placeholder="Busque por um nome ou profissão" value="<?php echo htmlspecialchars($search); ?>" class="search-field">
                 <button type="submit" class="search-button" aria-label="Buscar prestadores de serviço">
@@ -73,7 +76,6 @@ if (isset($conn)) {
                     
                     <div class="categories-grid">
                         <?php
-                        // A variável $profissoesResult deve vir de fetch_profissionais.php
                         if (isset($profissoesResult) && $profissoesResult->num_rows > 0) {
                             while ($row = $profissoesResult->fetch_assoc()) {
                                 echo "<a href='index.php?profissao=" . htmlspecialchars($row['id_profissao']) . "' class='category-card'>
@@ -110,9 +112,8 @@ if (isset($conn)) {
 
                     <ul class="service-list">
                         <?php
-                        // A variável $result deve vir de fetch_profissionais.php
                         if (isset($result) && $result->num_rows > 0) {
-                            $contador = 1; // Inicia o contador em 1 para numeração crescente
+                            $contador = 1; 
                             while ($row = $result->fetch_assoc()) {
                                 $telefone_limpo = preg_replace('/\D/', '', $row['telefone']);
                                 echo "<li class='service-card'>
@@ -125,7 +126,7 @@ if (isset($conn)) {
                                         </div>";
 
                                 if (!empty($row['descricao'])) {
-                                    echo "<p><strong>Descrição:</strong> " . nl2br(htmlspecialchars($row['descricao'])) . "</p>"; // nl2br para quebras de linha
+                                    echo "<p><strong>Descrição:</strong> " . nl2br(htmlspecialchars($row['descricao'])) . "</p>";
                                 }
 
                                 echo "<p><strong>Tempo de Profissão:</strong> " . htmlspecialchars($row['tempo_profissao']) . " anos</p>";
@@ -161,7 +162,7 @@ if (isset($conn)) {
                                 }
 
                                 echo "</div></li>";
-                                $contador++; // Incrementa para a próxima exibição
+                                $contador++;
                             }
                         } else {
                             echo "<div class='no-results'>
@@ -180,14 +181,7 @@ if (isset($conn)) {
     <?php require_once __DIR__ . "/partials/footer.php"; ?>
     
     <?php
-    // Fechar conexão e liberar recursos
-    if (isset($stmt_profissionais) && $stmt_profissionais instanceof mysqli_stmt) {
-        $stmt_profissionais->close();
-    }
-    if (isset($stmt_categorias) && $stmt_categorias instanceof mysqli_stmt) {
-        $stmt_categorias->close();
-    }
-    if (isset($conn) && $conn->ping()) { // Verifica se a conexão ainda está aberta antes de fechar
+    if (isset($conn) && $conn instanceof mysqli) {
         $conn->close();
     }
     ?>
@@ -216,5 +210,3 @@ if (isset($conn)) {
       }
     }
     </script>
-</body>
-</html>
