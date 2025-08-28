@@ -13,10 +13,10 @@ function redirectWithMessage($type, $message, $location) {
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Recebendo e validando os dados do formulário
-    $nome = filter_input(INPUT_POST, 'nome', FILTER_SANITIZE_STRING);
+    $nome = filter_input(type: INPUT_POST, var_name: 'nome', filter: FILTER_SANITIZE_SPECIAL_CHARS);
     $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
     $telefone = preg_replace('/\D/', '', $_POST['telefone']); // Remove tudo que não for dígito
-    $mensagem = filter_input(INPUT_POST, 'mensagem', FILTER_SANITIZE_STRING);
+    $mensagem = filter_input(type: INPUT_POST, var_name: 'mensagem', filter: FILTER_SANITIZE_SPECIAL_CHARS);
 
     // Validação básica
     if (empty($nome) || empty($email) || empty($telefone) || empty($mensagem)) {
