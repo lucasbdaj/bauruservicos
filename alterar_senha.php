@@ -1,10 +1,12 @@
 <?php
+// 
 require_once __DIR__ . "/config/db_connection.php";
 require_once __DIR__ . "/logic/csrf_token.php";
 session_start();
 
 // Verificar login
 if (!isset($_SESSION['id_profissional'])) {
+    // Caminho corrigido
     header("Location: login.php");
     exit;
 }
@@ -19,7 +21,6 @@ unset($_SESSION['message_type'], $_SESSION['message_content']);
 
 // Processar a atualização
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // ... (toda a sua lógica PHP de validação e atualização continua a mesma) ...
     // Validação CSRF
     if (!isset($_POST["csrf_token"]) || !validateCSRFToken($_POST["csrf_token"])) {
         $_SESSION['message_type'] = 'error'; $_SESSION['message_content'] = 'Erro de segurança.'; header("Location: alterar_senha.php"); exit();
@@ -63,6 +64,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         session_start();
         $_SESSION['message_type'] = 'success';
         $_SESSION['message_content'] = 'Senha alterada com sucesso! Por favor, faça login novamente.';
+        // Caminho corrigido
         header("Location: login.php");
         exit();
     } else {
@@ -78,7 +80,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <head>
     <meta charset="UTF-8">
     <title>Alterar senha - Bauru Serviços</title>
-    <link rel="stylesheet" href="styles/styles.css">
+    <link rel="stylesheet" href="/styles/styles.css">
 </head>
 <body>
     <?php require_once __DIR__ . "/partials/header.php"; ?>
@@ -127,7 +129,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <?php require_once __DIR__ . "/partials/footer.php"; $conn->close(); ?>
 
     <script>
-        // Esta função é global, não precisa estar dentro de um listener específico
         function togglePassword(id) {
             var passwordField = document.getElementById(id);
             if (passwordField) {

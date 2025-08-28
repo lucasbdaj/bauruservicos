@@ -38,7 +38,7 @@ unset($_SESSION['message_type'], $_SESSION['message_content']);
                 </p>
             <?php endif; ?>
 
-            <form action="process/envia_cadastro.php" method="POST" id ="cadForm">
+            <form action="envia_cadastro.php" method="POST" id ="cadForm">
             <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
             <div class="form-group">
             <label for="nome_profissional">

@@ -17,9 +17,9 @@ $message_type = $_SESSION['message_type'] ?? '';
 $message_content = $_SESSION['message_content'] ?? '';
 unset($_SESSION['message_type'], $_SESSION['message_content']);
 
-// 3. Processar a atualização do formulário via POST
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['atualizar_perfil'])) {
-    // Validação do Token CSRF
+// 3. Processar o formulário via POST (Bloco Inteiramente Corrigido)
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Validação do Token CSRF (executa para ambas as ações)
     if (!isset($_POST["csrf_token"]) || !validateCSRFToken($_POST["csrf_token"])) {
         $_SESSION['message_type'] = 'error';
         $_SESSION['message_content'] = 'Erro de segurança. Tente novamente.';
@@ -27,7 +27,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['atualizar_perfil'])) {
         exit();
     }
 
-    // Validação da senha atual para autorizar a alteração
+    // Validação da senha atual para autorizar qualquer alteração
     $senha_atual = $_POST['senha_atual'];
     if (empty($senha_atual)) {
         $_SESSION['message_type'] = 'error';
@@ -51,46 +51,81 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['atualizar_perfil'])) {
         exit();
     }
 
-    // Coleta e sanitização de TODOS os dados do perfil
-    $nome_profissional = filter_input(INPUT_POST, 'nome_profissional', FILTER_UNSAFE_RAW, FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
-    $id_profissao = filter_input(INPUT_POST, 'id_profissao', FILTER_VALIDATE_INT);
-    $data_nascimento = filter_input(INPUT_POST, 'data_nascimento', FILTER_UNSAFE_RAW);
-    $tempo_profissao = filter_input(INPUT_POST, 'tempo_profissao', FILTER_VALIDATE_INT);
-    $descricao = filter_input(INPUT_POST, 'descricao', FILTER_UNSAFE_RAW, FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
-    $telefone = preg_replace('/\D/', '', $_POST['telefone']);
-    $rede_social = filter_input(INPUT_POST, 'rede_social', FILTER_VALIDATE_URL);
-    $link_google = filter_input(INPUT_POST, 'link_google', FILTER_VALIDATE_URL);
-    $site_prestador = filter_input(INPUT_POST, 'site_prestador', FILTER_VALIDATE_URL);
-    $endereco = filter_input(INPUT_POST, 'endereco', FILTER_UNSAFE_RAW, FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
-    $presta_servico_endereco = isset($_POST['servicos_endereco']) ? 'S' : 'N';
+    // --- LÓGICA SEPARADA PARA CADA AÇÃO ---
 
-    // Preparar e executar a atualização no banco de dados
-    $sql_update = "UPDATE profissional SET 
-        nome_profissional = ?, id_profissao = ?, data_nascimento = ?, tempo_profissao = ?, 
-        descricao = ?, telefone = ?, rede_social = ?, link_google = ?, site_prestador = ?, 
-        endereco = ?, presta_servico_endereco = ?
-        WHERE id_profissional = ?";
-    
-    $stmt_update = $conn->prepare($sql_update);
-    // Tipos: s (string), i (integer)
-    $stmt_update->bind_param("sisisssssssi", 
-        $nome_profissional, $id_profissao, $data_nascimento, $tempo_profissao, $descricao, 
-        $telefone, $rede_social, $link_google, $site_prestador, $endereco, 
-        $presta_servico_endereco, $id_profissional
-    );
+    // AÇÃO 1: Desativar o cadastro
+    if (isset($_POST['desativar_cadastro'])) {
+        $sql_update = "UPDATE profissional SET ativo = 'N' WHERE id_profissional = ?";
+        $stmt_update = $conn->prepare($sql_update);
 
-    if ($stmt_update->execute()) {
-        $_SESSION['message_type'] = 'success';
-        $_SESSION['message_content'] = 'Perfil atualizado com sucesso!';
-    } else {
-        $_SESSION['message_type'] = 'error';
-        $_SESSION['message_content'] = 'Erro ao atualizar o perfil. Tente novamente.';
-        error_log("Erro ao atualizar perfil: " . $stmt_update->error);
+        if (!$stmt_update) {
+            error_log("Erro ao preparar query de desativação: " . $conn->error);
+            $_SESSION['message_type'] = 'error';
+            $_SESSION['message_content'] = 'Erro interno ao tentar desativar cadastro.';
+            header("Location: editar_cadastro.php");
+            exit();
+        }
+
+        $stmt_update->bind_param("i", $id_profissional);
+
+        if ($stmt_update->execute()) {
+            $_SESSION['message_type'] = 'success';
+            $_SESSION['message_content'] = 'Cadastro desativado com sucesso! Caso você faça login nos próximos 30 dias, seu perfil será mantido. Caso contrário, será excluído.';
+            session_destroy(); // Encerrar a sessão após desativação
+            header("Location: index.php"); // Redirecionar para a página inicial
+            exit();
+        } else {
+            error_log("Erro ao desativar cadastro: " . $stmt_update->error);
+            $_SESSION['message_type'] = 'error';
+            $_SESSION['message_content'] = 'Erro ao desativar cadastro. Tente novamente.';
+            header("Location: editar_cadastro.php");
+            exit();
+        }
+        $stmt_update->close();
+
+    // AÇÃO 2: Atualizar o perfil
+    } elseif (isset($_POST['atualizar_perfil'])) {
+        // Coleta e sanitização de TODOS os dados do perfil (com filtros melhorados)
+        $nome_profissional = filter_input(INPUT_POST, 'nome_profissional', FILTER_SANITIZE_SPECIAL_CHARS);
+        $id_profissao = filter_input(INPUT_POST, 'id_profissao', FILTER_VALIDATE_INT);
+        $data_nascimento = filter_input(INPUT_POST, 'data_nascimento', FILTER_SANITIZE_SPECIAL_CHARS);
+        $tempo_profissao = filter_input(INPUT_POST, 'tempo_profissao', FILTER_VALIDATE_INT);
+        $descricao = filter_input(INPUT_POST, 'descricao', FILTER_SANITIZE_SPECIAL_CHARS);
+        $telefone = preg_replace('/\D/', '', $_POST['telefone']);
+        $rede_social = filter_input(INPUT_POST, 'rede_social', FILTER_VALIDATE_URL);
+        $link_google = filter_input(INPUT_POST, 'link_google', FILTER_VALIDATE_URL);
+        $site_prestador = filter_input(INPUT_POST, 'site_prestador', FILTER_VALIDATE_URL);
+        $endereco = filter_input(INPUT_POST, 'endereco', FILTER_SANITIZE_SPECIAL_CHARS);
+        $presta_servico_endereco = isset($_POST['servicos_endereco']) ? 'S' : 'N';
+
+        // Preparar e executar a atualização no banco de dados
+        $sql_update = "UPDATE profissional SET 
+            nome_profissional = ?, id_profissao = ?, data_nascimento = ?, tempo_profissao = ?, 
+            descricao = ?, telefone = ?, rede_social = ?, link_google = ?, site_prestador = ?, 
+            endereco = ?, presta_servico_endereco = ?
+            WHERE id_profissional = ?";
+        
+        $stmt_update = $conn->prepare($sql_update);
+        $stmt_update->bind_param("sisisssssssi", 
+            $nome_profissional, $id_profissao, $data_nascimento, $tempo_profissao, $descricao, 
+            $telefone, $rede_social, $link_google, $site_prestador, $endereco, 
+            $presta_servico_endereco, $id_profissional
+        );
+
+        if ($stmt_update->execute()) {
+            $_SESSION['message_type'] = 'success';
+            $_SESSION['message_content'] = 'Perfil atualizado com sucesso!';
+        } else {
+            $_SESSION['message_type'] = 'error';
+            $_SESSION['message_content'] = 'Erro ao atualizar o perfil. Tente novamente.';
+            error_log("Erro ao atualizar perfil: " . $stmt_update->error);
+        }
+        $stmt_update->close();
+        header("Location: editar_cadastro.php");
+        exit();
     }
-    $stmt_update->close();
-    header("Location: editar_cadastro.php");
-    exit();
 }
+
 
 // 4. Buscar dados atuais do profissional para exibir no formulário
 $sql_get_data = "SELECT nome_profissional, id_profissao, data_nascimento, tempo_profissao, descricao, telefone, rede_social, link_google, site_prestador, endereco, presta_servico_endereco FROM profissional WHERE id_profissional = ?";
@@ -182,7 +217,7 @@ if (!$dados_profissional) {
 
                 <div class="form-group">
                     <label for="servicos_endereco">
-                        <input type="checkbox" id="servicos_endereco" name="servicos_endereco" value="S">
+                        <input type="checkbox" id="servicos_endereco" name="servicos_endereco" value="S" <?php echo ($dados_profissional['presta_servico_endereco'] ?? 'N') === 'S' ? 'checked' : ''; ?>>
                         Presta serviços no endereço informado? <span></span>
                     </label>
                 </div>
@@ -205,13 +240,14 @@ if (!$dados_profissional) {
                 <div class="form-group">
                     <label for="senha_atual">Senha:<span class="required">*</span></label>
                     <div class="password-container">
-                        <input type="password" id="senha_atual" name="senha_atual" placeholder="Digite sua senha" required>
+                        <input type="password" id="senha_atual" name="senha_atual" placeholder="Digite sua senha para salvar" required>
                         <span class="toggle-password" onclick="togglePassword('senha_atual')">👁️</span>
                     </div>
                 </div>
                 
                 <div class="form-buttons-container">
                     <button type="submit" name="atualizar_perfil">Salvar Alterações do Perfil</button>
+                    <button type="submit" name="desativar_cadastro" class="desativar-btn" onclick="return confirm('Tem certeza que deseja desativar seu cadastro? Você terá 30 dias para reativar antes que seja permanentemente excluído.')">Desativar Cadastro</button>
                     <button type="button" class="cancel-btn" onclick="window.location.href='gerenciar.php'">Cancelar</button>
                 </div>
             </form>
