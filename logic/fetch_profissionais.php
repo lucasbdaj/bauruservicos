@@ -33,96 +33,77 @@ function getProfissoesComContagem($conn) {
 }
 
 /**
- * Busca prestadores de serviços de uma categoria específica ordenados por data de cadastro decrescente.
+ * Busca prestadores de serviços com base em filtros dinâmicos (termo de busca e/ou ID da profissão).
  *
  * @param mysqli $conn Conexão com o banco de dados.
- * @param int $idProfissao ID da profissão selecionada.
+ * @param string $search Termo de busca (opcional).
+ * @param int $idProfissao ID da profissão selecionada (opcional).
  * @return mysqli_result|false Resultado da consulta ou false em caso de erro.
  */
-function getPrestadoresPorCategoria($conn, $idProfissao) {
+function getPrestadoresComFiltros($conn, $search = '', $idProfissao = 0) {
+    // Base da consulta SQL
     $sql = "SELECT p.id_profissional, p.nome_profissional, p.descricao, p.telefone, p.email, pr.nome_profissao, 
                    p.tempo_profissao, p.rede_social, p.link_google, p.site_prestador, p.endereco, p.presta_servico_endereco
             FROM profissional p 
             JOIN profissao pr ON p.id_profissao = pr.id_profissao 
-            WHERE p.ativo = ? AND pr.id_profissao = ?
-            ORDER BY p.id_profissional DESC";
+            WHERE p.ativo = ?";
 
-    $stmt = $conn->prepare($sql);
-    if ($stmt) {
-        $statusAtivo = STATUS_ATIVO;
-        $stmt->bind_param("si", $statusAtivo, $idProfissao);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $stmt->close();
-        return $result;;
-    } else {
-        error_log("Erro na preparação da consulta de prestadores por categoria: " . $conn->error);
-        return false;
+    $params = [STATUS_ATIVO];
+    $types = 's';
+
+    // Adiciona o filtro por ID da profissão, se fornecido
+    if (!empty($idProfissao)) {
+        $sql .= " AND pr.id_profissao = ?";
+        $params[] = $idProfissao;
+        $types .= 'i';
     }
-}
 
-/**
- * Busca prestadores de serviços com base em filtros (para busca geral).
- *
- * @param mysqli $conn Conexão com o banco de dados.
- * @param string $search Termo de busca.
- * @return mysqli_result|false Resultado da consulta ou false em caso de erro.
- */
-function getPrestadoresBusca($conn, $search) {
-    $sql = "SELECT p.id_profissional, p.nome_profissional, p.descricao, p.telefone, p.email, pr.nome_profissao, 
-                   p.tempo_profissao, p.rede_social, p.link_google, p.site_prestador, p.endereco, p.presta_servico_endereco
-            FROM profissional p 
-            JOIN profissao pr ON p.id_profissao = pr.id_profissao 
-            WHERE p.ativo = ? 
-            AND (p.nome_profissional LIKE ? OR pr.nome_profissao LIKE ?)
-            ORDER BY p.id_profissional DESC";
+    // Adiciona o filtro por termo de busca, se fornecido
+    if (!empty($search)) {
+        $sql .= " AND (p.nome_profissional LIKE ?)";
+        $searchTerm = "%" . $search . "%";
+        $params[] = $searchTerm;
+        $types .= 's';
+    }
+
+    $sql .= " ORDER BY p.id_profissional DESC";
 
     $stmt = $conn->prepare($sql);
     if ($stmt) {
-        $statusAtivo = STATUS_ATIVO;
-        $searchTerm = "%" . $search . "%";
-        $stmt->bind_param("sss", $statusAtivo, $searchTerm, $searchTerm);
+        // Usa o operador splat (...) para passar os parâmetros dinamicamente
+        $stmt->bind_param($types, ...$params);
         $stmt->execute();
         $result = $stmt->get_result();
         $stmt->close();
-        return $result;;
+        return $result;
     } else {
-        error_log("Erro na preparação da consulta de prestadores: " . $conn->error);
+        error_log("Erro na preparação da consulta de prestadores com filtros: " . $conn->error);
         return false;
     }
 }
 
 // Processar dados do front-end
 $search = filter_input(INPUT_GET, 'search', FILTER_DEFAULT) ?? '';
-$selectedProfissao = filter_input(INPUT_GET, 'profissao', FILTER_VALIDATE_INT) ?? '';
+$selectedProfissao = filter_input(INPUT_GET, 'profissao', FILTER_VALIDATE_INT) ?? 0;
 
 // Determinar o modo de exibição
 $showCategories = empty($search) && empty($selectedProfissao);
-$showProfissionais = !empty($selectedProfissao) || !empty($search);
 
 // Obter dados do banco
 if ($showCategories) {
-    // Mostrar categorias
+    // Modo de exibição: Categorias
     $profissoesResult = getProfissoesComContagem($conn);
     if (!$profissoesResult) {
         $fetch_error = "Erro ao buscar profissões.";
-        $profissoesResult = null;
     }
-    $result = null;
-} else if (!empty($selectedProfissao)) {
-    // Mostrar profissionais de uma categoria específica
-    $result = getPrestadoresPorCategoria($conn, $selectedProfissao);
+    $result = null; // Garante que a variável de resultados de profissionais esteja nula
+
+} else {
+    // Modo de exibição: Lista de Profissionais (com ou sem filtros)
+    $result = getPrestadoresComFiltros($conn, $search, $selectedProfissao);
     if (!$result) {
-        $fetch_error = "Erro ao buscar prestadores de serviço";
-        $result = null;
+        $fetch_error = "Erro ao buscar prestadores de serviço.";
     }
-    $profissoesResult = null;
-} else if (!empty($search)) {
-    // Mostrar resultados da busca
-    $result = getPrestadoresBusca($conn, $search);
-    if (!$result) {
-        die("Erro ao buscar prestadores de serviço.");
-    }
-    $profissoesResult = null;
+    $profissoesResult = null; // Garante que a variável de profissões esteja nula
 }
 ?>

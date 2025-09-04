@@ -20,12 +20,11 @@ if (isset($conn)) {
     }
 }
 
-// --- CORREÇÃO ADICIONADA AQUI ---
-// Inclui e executa o script que busca os profissionais no banco de dados.
-// Ele usará as variáveis $search e $selectedProfissao que definimos acima
-// e criará as variáveis $showCategories, $profissoesResult e $result para o HTML usar.
+
+
 require_once __DIR__ . "/logic/fetch_profissionais.php";
-// --- FIM DA CORREÇÃO ---
+
+$todas_as_profissoes = getProfissoesComContagem($conn)
 
 ?>
 
@@ -58,15 +57,41 @@ require_once __DIR__ . "/logic/fetch_profissionais.php";
                     <?php echo htmlspecialchars($message_content); ?>
                 </p>
             <?php endif; ?>
+            
 
             <div class="professional-counter">
                 <p>Atualmente, temos <strong><?php echo $total_profissionais; ?></strong> profissionais ativos na plataforma!</p>
             </div>
             <form method="get" action="index.php" id="searchForm">
                 <input type="text" name="search" id="searchInput" placeholder="Busque por um nome ou profissão" value="<?php echo htmlspecialchars($search); ?>" class="search-field">
+                <select name="profissao" class="search-field" aria-label="Filtrar por profissão">
+                    <option value="">Filtrar por profissão...</option>
+                    <?php
+                    // Verifica se a variável existe e se há linhas
+                    if (isset($todas_as_profissoes) && $todas_as_profissoes->num_rows > 0) {
+                        // Volta o ponteiro para o início para garantir a leitura
+                        $todas_as_profissoes->data_seek(0); 
+                        while ($row = $todas_as_profissoes->fetch_assoc()) {
+                            // Adiciona 'selected' se esta for a profissão já filtrada
+                            $selected = (isset($selectedProfissao) && $selectedProfissao == $row['id_profissao']) ? 'selected' : '';
+                            echo "<option value='" . htmlspecialchars($row['id_profissao']) . "' $selected>" . htmlspecialchars($row['nome_profissao']) . "</option>";
+                        }
+                    }
+                    ?>
+                </select>
                 <button type="submit" class="search-button" aria-label="Buscar prestadores de serviço">
                     <i class="fas fa-search"></i> Buscar
                 </button>
+                <?php
+                // Só exibe o botão de limpar se um dos filtros estiver ativo
+                if (!empty($search) || !empty($selectedProfissao)):
+                ?>
+                    <a href="index.php" class="clear-filter-btn" title="Remover todos os filtros">
+                        <i class="fas fa-times"></i> Limpar
+                    </a>
+                <?php 
+                endif;
+                ?>
             </form>
 
             <?php if ($showCategories): ?>
@@ -136,29 +161,49 @@ require_once __DIR__ . "/logic/fetch_profissionais.php";
                                 }
 
                                 echo "<div class='contact-info'>
-                                        <p><strong>
-                                            <a href='https://wa.me/55" . $telefone_limpo . "' target='_blank' class='whatsapp-button' title='Conversar no WhatsApp'>
-                                                <i class='fab fa-whatsapp'></i> " . htmlspecialchars($row['telefone']) . "
-                                            </a>
-                                        </strong></p>";
+                                <div class='contact-buttons-grid'>";
+                                // MODIFICAÇÃO 1: Botões para Ligar e WhatsApp (sem expor o número)
+                                echo "  <a href='tel:+55" . $telefone_limpo . "' class='contact-button call-button' title='Ligar para o profissional'>
+                                            <i class='fas fa-phone-alt'></i> Ligar
+                                        </a>
+                                        <a href='https://wa.me/55" . $telefone_limpo . "' target='_blank' class='contact-button whatsapp-button' title='Conversar no WhatsApp'>
+                                            <i class='fab fa-whatsapp'></i> WhatsApp
+                                        </a>";
 
+                                // MODIFICAÇÃO 2: Botão para Enviar E-mail (sem expor o e-mail)
                                 if (!empty($row['email'])) {
-                                    echo "<p><strong>Email:</strong> 
-                                            <a href='mailto:" . htmlspecialchars($row['email']) . "'>" . htmlspecialchars($row['email']) . "</a></p>";
+                                    echo "<a href='mailto:" . htmlspecialchars($row['email']) . "' class='contact-button email-button' title='Enviar um e-mail'>
+                                            <i class='fas fa-envelope'></i> Enviar E-mail
+                                        </a>";
                                 }
 
+                                // MODIFICAÇÃO 3: Botão para Google Maps (sem expor o endereço)
+                                if ($row['presta_servico_endereco'] === 'S' && !empty($row['endereco'])) {
+                                    // Codifica o endereço para ser usado em uma URL de forma segura
+                                    $endereco_url = urlencode($row['endereco']);
+                                    echo "<a href='https://www.google.com/maps/search/?api=1&query=" . $endereco_url . "' target='_blank' class='contact-button maps-button' title='Ver endereço no mapa'>
+                                            <i class='fas fa-map-marker-alt'></i> Ver no Mapa
+                                        </a>";
+                                }
+
+                                echo "  </div>"; // Fim de .contact-buttons-grid
+
+                                // Links públicos (Rede Social, Google, Site) continuam normais
+                                $social_links_html = '';
                                 if (!empty($row['rede_social'])) {
-                                    echo renderSocialLink($row['rede_social']);
+                                    $social_links_html .= renderSocialLink($row['rede_social']);
                                 }
-
                                 if (!empty($row['link_google'])) {
-                                    echo "<p><strong>Google:</strong> 
-                                            <a href='" . htmlspecialchars($row['link_google']) . "' target='_blank' rel='noopener noreferrer'>Ver no Google</a></p>";
+                                    $social_links_html .= "<p><strong>Google:</strong> 
+                                                            <a href='" . htmlspecialchars($row['link_google']) . "' target='_blank' rel='noopener noreferrer'>Ver no Google</a></p>";
+                                }
+                                if (!empty($row['site_prestador'])) {
+                                    $social_links_html .= "<p><strong>Site:</strong> 
+                                                            <a href='" . htmlspecialchars($row['site_prestador']) . "' target='_blank' rel='noopener noreferrer'>Visitar Site</a></p>";
                                 }
 
-                                if (!empty($row['site_prestador'])) {
-                                    echo "<p><strong>Site:</strong> 
-                                            <a href='" . htmlspecialchars($row['site_prestador']) . "' target='_blank' rel='noopener noreferrer'>Visitar Site</a></p>";
+                                if (!empty($social_links_html)) {
+                                    echo "<div class='social-links-container'>" . $social_links_html . "</div>";
                                 }
 
                                 echo "</div></li>";
@@ -175,8 +220,15 @@ require_once __DIR__ . "/logic/fetch_profissionais.php";
                     </ul>
                 </div>
             <?php endif; ?>
+        <?php if (!$is_logged_in): ?>
+        <div class="cta-container">
+            <h3>É prestador de serviço e ainda não se cadastrou?</h3>
+            <a href="cadastro.php" class="cta-button">Clique aqui!</a>
+        </div>
+        <?php endif; ?>
         </main>
     </div>
+
     
     <?php require_once __DIR__ . "/partials/footer.php"; ?>
     

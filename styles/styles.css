@@ -127,6 +127,56 @@ header {
     width: 100%;
 }
 
+.hamburger {
+    display: none; /* Escondido em telas grandes */
+    background: none;
+    border: none;
+    color: white;
+    font-size: 2em;
+    cursor: pointer;
+}
+
+
+.cta-container {
+    background-color: var(--accent-color);
+    color: var(--white);
+    padding: 30px;
+    border-radius: 8px;
+    text-align: center;
+    margin-bottom: 40px;
+    max-width: 800px;
+    width: 100%;
+    box-shadow: var(--box-shadow-light);
+}
+
+.cta-container h3 {
+    font-size: 1.8em;
+    margin-bottom: 10px;
+}
+
+.cta-container p {
+    font-size: 1.1em;
+    margin-bottom: 20px;
+    opacity: 0.9;
+}
+
+.cta-button {
+    background-color: var(--white);
+    color: var(--accent-color);
+    padding: 12px 25px;
+    border-radius: 5px;
+    font-size: 1.1em;
+    font-weight: bold;
+    text-decoration: none;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.cta-button:hover {
+    background-color: #f0f0f0;
+    color: #1a7431; /* Tom mais escuro do verde */
+}
+
+
 /* ==================== Estilos do Menu Dropdown do Usuário ==================== */
 
 /* Container principal que alinha o menu no cabeçalho */
@@ -180,10 +230,11 @@ header {
     color: var(--primary-color);
 }
 
-/* A MÁGICA: Mostra o dropdown quando o mouse passa por cima do container */
-.user-menu-container:hover .dropdown-content {
+.dropdown-content.show {
     display: block;
 }
+
+
 
 /* ==================== stiles do drop down ==================== */
 
@@ -754,6 +805,72 @@ body.cadastro {
     gap: 8px;
 }
 
+.contact-buttons-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); /* Grid responsivo */
+    gap: 10px; /* Espaçamento entre os botões */
+    margin-bottom: 20px;
+}
+
+.contact-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-weight: bold;
+    color: var(--white);
+    text-align: center;
+    transition: background-color var(--transition-speed), transform 0.2s;
+    border: none;
+    cursor: pointer;
+}
+
+.contact-button:hover {
+    transform: translateY(-2px);
+    color: var(--white);
+}
+
+.contact-button i {
+    font-size: 1.1em;
+}
+
+/* Cores específicas para cada botão */
+.call-button {
+    background-color: var(--primary-color); /* Azul */
+}
+.call-button:hover {
+    background-color: #0056b3;
+}
+
+.whatsapp-button {
+    background-color: #25D366; /* Verde WhatsApp */
+}
+.whatsapp-button:hover {
+    background-color: #1DA851;
+}
+
+.email-button {
+    background-color: var(--secondary-color); /* Cinza */
+}
+.email-button:hover {
+    background-color: #5a6268;
+}
+
+.maps-button {
+    background-color: #EA4335; /* Vermelho Google */
+}
+.maps-button:hover {
+    background-color: #c5372a;
+}
+
+.social-links-container {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid var(--border-color);
+}
+
 .whatsapp-button {
     background-color: #25D366; /* Cor do WhatsApp */
     color: var(--white);
@@ -820,6 +937,29 @@ body.cadastro {
     color: var(--light-text-color);
     font-size: 1.1em;
 }
+
+.clear-filter-btn {
+    background-color: var(--secondary-color); /* Cinza, para indicar uma ação secundária */
+    color: var(--white);
+    border: none;
+    padding: 12px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color var(--transition-speed);
+    text-decoration: none; /* Garante que não haja sublinhado */
+    white-space: nowrap; /* Impede que o texto quebre em duas linhas */
+}
+
+.clear-filter-btn:hover {
+    background-color: #5a6268; /* Tom mais escuro de cinza */
+    color: var(--white);
+}
+
+
 
 /* ==================== Página de Política de Privacidade ==================== */
 .legal-page {
@@ -987,9 +1127,14 @@ footer {
 /* Para tablets e telas menores (até 768px) */
 @media (max-width: 768px) {
     .header-container {
-        flex-direction: column;
+        flex-direction: row;
+        justify-content: space-between;
         text-align: center;
         gap: 15px;
+    }
+
+    .hamburger {
+        display: block; /* Mostra o botão hambúrguer */
     }
 
     .logo-container {
@@ -998,8 +1143,19 @@ footer {
     }
 
     .header-links {
+        display: none; /* Esconde a navegação por padrão */
+        position: absolute;
+        top: 80px; /* Altura do header */
+        left: 0;
         width: 100%;
+        background-color: var(--primary-color);
+        flex-direction: column;
+        text-align: center;
+        padding: 20px 0;
         justify-content: space-around;
+    }
+    .header-links.active {
+        display: flex; /* Mostra a navegação quando ativa */
     }
 
     .form-container {
@@ -1065,6 +1221,8 @@ footer {
     }
 }
 
+
+
 /* Para smartphones (até 480px) */
 @media (max-width: 480px) {
     body {
@@ -1129,7 +1287,29 @@ footer {
         color: var(--secondary-color);
         margin-bottom: 20px;
     }
+.cta-container {
+    padding: 25px 20px; /* Reduz o espaçamento interno */
+    margin-bottom: 30px;
 }
+
+.cta-container h3 {
+    font-size: 1.5em; /* Diminui o tamanho do título */
+}
+
+.cta-container p {
+    font-size: 1em; /* Ajusta o tamanho do novo parágrafo */
+    margin-bottom: 25px; /* Aumenta o espaço antes do botão */
+}
+
+.cta-button {
+    padding: 12px 20px; /* Garante um bom tamanho para o toque */
+    font-size: 1em;
+    display: inline-block; /* Garante que o botão não ocupe a largura toda */
+    width: auto; /* Largura automática baseada no conteúdo */
+
+}
+
+
 
 /* Estilos específicos para a página Sobre (sobre.php) */
 main.sobre-page section {

@@ -43,6 +43,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt_pass->close();
 
     if (!$user_data || !password_verify($senha_atual, $user_data['senha'])) {
+        // Salva os dados do POST em uma sessão para repopular o formulário
+        $_SESSION['form_data'] = $_POST;
         $_SESSION['message_type'] = 'error';
         $_SESSION['message_content'] = 'Senha atual incorreta!';
         header("Location: editar_cadastro.php");
@@ -133,6 +135,14 @@ $stmt_get_data->execute();
 $result_data = $stmt_get_data->get_result();
 $dados_profissional = $result_data->fetch_assoc();
 $stmt_get_data->close();
+$dados_para_form = $dados_profissional;
+
+if (isset($_SESSION['form_data'])) {
+    // Se houver dados de formulário na sessão, use-os
+    $dados_para_form = $_SESSION['form_data'];
+    // Limpe os dados da sessão para não exibi-los novamente em um futuro acesso
+    unset($_SESSION['form_data']);
+}
 
 if (!$dados_profissional) {
     // Caso raro de erro, destrói a sessão e manda para o login
@@ -169,7 +179,7 @@ if (!$dados_profissional) {
                         <span class="info-icon">i</span>
                         <span class="tooltiptext">Informe seu nome completo ou o nome do seu negócio.</span>
                     </label>
-                    <input type="text" id="nome_profissional" name="nome_profissional" value="<?php echo htmlspecialchars($dados_profissional['nome_profissional'] ?? ''); ?>" required>
+                    <input type="text" id="nome_profissional" name="nome_profissional" value="<?php echo htmlspecialchars($dados_para_form['nome_profissional'] ?? ''); ?>" required>
                 </div>
                 
                 <div class="form-group">
@@ -180,7 +190,7 @@ if (!$dados_profissional) {
                         $result_profissao = $conn->query($sql_profissao);
                         if ($result_profissao && $result_profissao->num_rows > 0) {
                             while ($row = $result_profissao->fetch_assoc()) {
-                                $selected = ($row['id_profissao'] == $dados_profissional['id_profissao']) ? 'selected' : '';
+                                $selected = ($row['id_profissao'] == $dados_para_form['id_profissao']) ? 'selected' : '';
                                 echo "<option value='" . htmlspecialchars($row['id_profissao']) . "' $selected>" . htmlspecialchars($row['nome_profissao']) . "</option>";
                             }
                         }
@@ -190,49 +200,49 @@ if (!$dados_profissional) {
 
                 <div class="form-group">
                     <label for="data_nascimento">Data de nascimento:<span class="required">*</span></label>
-                    <input type="date" id="data_nascimento" name="data_nascimento" value="<?php echo htmlspecialchars($dados_profissional['data_nascimento'] ?? ''); ?>" required>
+                    <input type="date" id="data_nascimento" name="data_nascimento" value="<?php echo htmlspecialchars($dados_para_form['data_nascimento'] ?? ''); ?>" required>
                 </div>
 
                 <div class="form-group">
                     <label for="tempo_profissao">Tempo de profissão (anos):<span class="required">*</span></label>
-                    <input type="number" id="tempo_profissao" name="tempo_profissao" value="<?php echo htmlspecialchars($dados_profissional['tempo_profissao'] ?? '0'); ?>" required min="0">
+                    <input type="number" id="tempo_profissao" name="tempo_profissao" value="<?php echo htmlspecialchars($dados_para_form['tempo_profissao'] ?? '0'); ?>" required min="0">
                 </div>
                 
                 <div class="form-group">
                     <label for="descricao">Descrição:<span class="required">*</span></label>
-                    <textarea id="descricao" name="descricao" rows="5" required><?php echo htmlspecialchars($dados_profissional['descricao'] ?? ''); ?></textarea>
+                    <textarea id="descricao" name="descricao" rows="5" required><?php echo htmlspecialchars($dados_para_form['descricao'] ?? ''); ?></textarea>
                 </div>
 
                 <div class="form-group">
                     <label for="telefone">Telefone:<span class="required">*</span></label>
-                    <input type="text" id="telefone" name="telefone" value="<?php echo htmlspecialchars($dados_profissional['telefone'] ?? ''); ?>" required>
+                    <input type="text" id="telefone" name="telefone" value="<?php echo htmlspecialchars($dados_para_form['telefone'] ?? ''); ?>" required>
                 </div>
 
                 <div class="form-group">
                     <label for="endereco">Endereço:</label>
-                    <input type="text" id="endereco" name="endereco" value="<?php echo htmlspecialchars($dados_profissional['endereco'] ?? ''); ?>">
+                    <input type="text" id="endereco" name="endereco" value="<?php echo htmlspecialchars($dados_para_form['endereco'] ?? ''); ?>">
                 </div>
 
                 <div class="form-group">
                     <label for="servicos_endereco">
-                        <input type="checkbox" id="servicos_endereco" name="servicos_endereco" value="S" <?php echo ($dados_profissional['presta_servico_endereco'] ?? 'N') === 'S' ? 'checked' : ''; ?>>
+                        <input type="checkbox" id="servicos_endereco" name="servicos_endereco" value="S" <?php echo ($dados_para_form['presta_servico_endereco'] ?? $dados_para_form['servicos_endereco'] ?? 'N') === 'S' ? 'checked' : ''; ?>>
                         Presta serviços no endereço informado? <span></span>
                     </label>
                 </div>
 
                 <div class="form-group">
                     <label for="rede_social">Rede social:</label>
-                    <input type="url" id="rede_social" name="rede_social" value="<?php echo htmlspecialchars($dados_profissional['rede_social'] ?? ''); ?>" placeholder="Informe o link da sua rede social">
+                    <input type="url" id="rede_social" name="rede_social" value="<?php echo htmlspecialchars($dados_para_form['rede_social'] ?? ''); ?>" placeholder="Informe o link da sua rede social">
                 </div>
 
                 <div class="form-group">
                     <label for="link_google">Link do google:</label>
-                    <input type="url" id="link_google" name="link_google" value="<?php echo htmlspecialchars($dados_profissional['link_google'] ?? ''); ?>" placeholder="Informe o link da página no Google">
+                    <input type="url" id="link_google" name="link_google" value="<?php echo htmlspecialchars($dados_para_form['link_google'] ?? ''); ?>" placeholder="Informe o link da página no Google">
                 </div>
 
                 <div class="form-group">
                     <label for="site_prestador">Site próprio:</label>
-                    <input type="url" id="site_prestador" name="site_prestador" value="<?php echo htmlspecialchars($dados_profissional['site_prestador'] ?? ''); ?>" placeholder="Informe o link do seu site">
+                    <input type="url" id="site_prestador" name="site_prestador" value="<?php echo htmlspecialchars($dados_para_form['site_prestador'] ?? ''); ?>" placeholder="Informe o link do seu site">
                 </div>
 
                 <div class="form-group">
@@ -244,8 +254,8 @@ if (!$dados_profissional) {
                 </div>
                 
                 <div class="form-buttons-container">
-                    <button type="submit" name="atualizar_perfil">Salvar Alterações do Perfil</button>
-                    <button type="submit" name="desativar_cadastro" class="desativar-btn" onclick="return confirm('Tem certeza que deseja desativar seu cadastro? Você terá 30 dias para reativar antes que seja permanentemente excluído.')">Desativar Cadastro</button>
+                    <button type="submit" name="atualizar_perfil">Salvar</button>
+                    <button type="submit" name="desativar_cadastro" class="desativar-btn" onclick="return confirm('Tem certeza que deseja desativar seu cadastro? Você terá 30 dias para reativar antes que seja permanentemente excluído.')">Desativar</button>
                     <button type="button" class="cancel-btn" onclick="window.location.href='gerenciar.php'">Cancelar</button>
                 </div>
             </form>

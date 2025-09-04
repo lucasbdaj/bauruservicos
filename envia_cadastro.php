@@ -1,14 +1,6 @@
 <?php
 require_once __DIR__ . '/bootstrap.php';
 
-// Função para exibir mensagens de erro/sucesso e redirecionar
-function redirectWithMessage($type, $message, $location) {
-    $_SESSION['message_type'] = $type;
-    $_SESSION['message_content'] = $message;
-    header("Location: " . $location);
-    exit();
-}
-
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Validar CSRF token
     if (!isset($_POST["csrf_token"]) || !validateCSRFToken($_POST["csrf_token"])) {

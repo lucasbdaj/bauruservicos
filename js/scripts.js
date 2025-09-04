@@ -24,3 +24,32 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+//Controle de dropdown para opções caso usuario esteja logado
+function toggleDropdown() {
+    document.getElementById("userDropdown").classList.toggle("show");
+}
+
+// Opcional: Fechar o dropdown se o usuário clicar fora dele
+window.onclick = function(event) {
+    if (!event.target.matches('.user-name')) {
+        var dropdowns = document.getElementsByClassName("dropdown-content");
+        for (var i = 0; i < dropdowns.length; i++) {
+            var openDropdown = dropdowns[i];
+            if (openDropdown.classList.contains('show')) {
+                openDropdown.classList.remove('show');
+            }
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const hamburgerButton = document.getElementById('hamburger-button');
+    const nav = document.getElementById('main-nav');
+
+    if (hamburgerButton && nav) {
+        hamburgerButton.addEventListener('click', function() {
+            nav.classList.toggle('active');
+        });
+    }
+});

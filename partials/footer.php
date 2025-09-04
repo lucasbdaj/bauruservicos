@@ -44,7 +44,8 @@ if ($is_logged_in) {
                 <li><a href="contato.php" class="cab-link">Contato</a></li>
 
                 <?php if ($is_logged_in): ?>
-                    
+                    <li><a href="gerenciar.php">Gerenciar</a></li>
+                    <li><a href="logout.php">Sair</a></li>
                 <?php else: ?>
                     <li><a href="cadastro.php" class="cab-link">Cadastro</a></li>
                     <li><a href="login.php" class="cab-link">Entrar</a></li>
