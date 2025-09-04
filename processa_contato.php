@@ -1,14 +1,6 @@
 <?php
 require_once __DIR__ . '/bootstrap.php';
 
-// Função para exibir mensagens de erro/sucesso e redirecionar
-function redirectWithMessage($type, $message, $location) {
-    $_SESSION['message_type'] = $type;
-    $_SESSION['message_content'] = $message;
-    header("Location: " . $location);
-    exit();
-}
-
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Recebendo e validando os dados do formulário
     $nome = filter_input(type: INPUT_POST, var_name: 'nome', filter: FILTER_SANITIZE_SPECIAL_CHARS);

@@ -34,20 +34,20 @@ unset($_SESSION['message_type'], $_SESSION['message_content']);
                 </p>
             <?php endif; ?>
             <div class="form-group">
-                <label for="nome">Nome:</label>
+                <label for="nome">Nome:<span class="required">*</span></label>
                 <input type="text" id="nome" name="nome" placeholder="Digite seu nome completo" required>
             </div>
             <div class="form-group">
-                <label for="email">E-mail:</label>
+                <label for="email">E-mail:<span class="required">*</span></label>
                 <input type="email" id="email" name="email" placeholder="Digite seu e-mail" required>
             </div>
             <div class="form-group">
-                <label for="telefone">Telefone:</label>
+                <label for="telefone">Telefone:<span class="required">*</span></label>
                 <input type="text" id="telefone" name="telefone" placeholder="(14) XXXXX-XXXX" required pattern="\(\d{2}\) \d{4,5}-\d{4}" title="Formato: (XX) XXXXX-XXXX ou (XX) XXXX-XXXX">
                 <small>Formato: (14) 99999-9999 ou (14) 9999-9999</small>
             </div>
             <div class="form-group">
-                <label for="mensagem">Mensagem:</label>
+                <label for="mensagem">Mensagem:<span class="required">*</span></label>
                 <textarea id="mensagem" name="mensagem" rows="5" placeholder="Digite a mensagem de contato. Aqui você pode fazer solicitações de inclusão de profissões que ainda não temos cadastradas, solicitar ajustes no seu cadastro ou até mesmo sugestões gerais para melhorias do nosso site." required></textarea>
             </div>
             <button type="submit">Enviar Mensagem</button>

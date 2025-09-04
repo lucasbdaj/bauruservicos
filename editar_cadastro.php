@@ -254,7 +254,7 @@ if (!$dados_profissional) {
                 </div>
                 
                 <div class="form-buttons-container">
-                    <button type="submit" name="atualizar_perfil">Salvar</button>
+                    <button type="submit" name="atualizar_perfil" class="submit-btn">Salvar</button>
                     <button type="submit" name="desativar_cadastro" class="desativar-btn" onclick="return confirm('Tem certeza que deseja desativar seu cadastro? Você terá 30 dias para reativar antes que seja permanentemente excluído.')">Desativar</button>
                     <button type="button" class="cancel-btn" onclick="window.location.href='gerenciar.php'">Cancelar</button>
                 </div>

@@ -40,12 +40,11 @@ if ($is_logged_in) {
             <h4>Navegação</h4>
             <ul>
                 <li><a href="index.php" class="cab-link">Início</a></li>
-                <li><a href="sobre.php" class="cab-link">Sobre Nós</a></li>
+                <li><a href="sobre.php" class="cab-link">Sobre</a></li>
                 <li><a href="contato.php" class="cab-link">Contato</a></li>
-
                 <?php if ($is_logged_in): ?>
-                    <li><a href="gerenciar.php">Gerenciar</a></li>
-                    <li><a href="logout.php">Sair</a></li>
+                    <li><a href="gerenciar.php" class="cab-link">Gerenciar</a></li>
+                    <li><a href="logout.php" class="cab-link">Sair</a></li>
                 <?php else: ?>
                     <li><a href="cadastro.php" class="cab-link">Cadastro</a></li>
                     <li><a href="login.php" class="cab-link">Entrar</a></li>

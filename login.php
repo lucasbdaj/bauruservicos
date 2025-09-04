@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $senha_login = $_POST['senha_login'] ?? '';
 
     if (empty($email_login) || empty($senha_login)) {
-        redirectWithMessage('error', 'Os campos e-mail e senha são obrigatórios.', 'login.php');
+        redirectWithMessage('error', 'Os campos e-mail e senha são obrigatórios!', 'login.php');
     }
 
     $sql_login = "SELECT id_profissional, senha, ativo FROM profissional WHERE email = ?";
@@ -121,7 +121,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
             </form>
 
-            <p>Ainda não tem uma conta? <a href="cadastro.php">Cadastre-se aqui</a></p>
+            <p>Ainda não tem uma conta? <a href="cadastro.php">Cadastre-se.</a></p>
         </div>
     </main>
 
@@ -146,17 +146,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
             if (email.value.trim() === "") {
-                erroEmail.textContent = "O campo e-mail é obrigatório.";
+                erroEmail.textContent = "O campo e-mail é obrigatório!";
                 erroEmail.style.display = 'block';
                 valido = false;
             } else if (!emailRegex.test(email.value)) {
-                erroEmail.textContent = "Por favor, insira um formato de e-mail válido.";
+                erroEmail.textContent = "Por favor, insira um formato de e-mail válido!";
                 erroEmail.style.display = 'block';
                 valido = false;
             }
 
             if (senha.value.trim() === "") {
-                erroSenha.textContent = "O campo senha é obrigatório.";
+                erroSenha.textContent = "O campo senha é obrigatório!";
                 erroSenha.style.display = 'block';
                 valido = false;
             }

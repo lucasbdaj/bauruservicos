@@ -63,8 +63,8 @@ $todas_as_profissoes = getProfissoesComContagem($conn)
                 <p>Atualmente, temos <strong><?php echo $total_profissionais; ?></strong> profissionais ativos na plataforma!</p>
             </div>
             <form method="get" action="index.php" id="searchForm">
-                <input type="text" name="search" id="searchInput" placeholder="Busque por um nome ou profissão" value="<?php echo htmlspecialchars($search); ?>" class="search-field">
-                <select name="profissao" class="search-field" aria-label="Filtrar por profissão">
+                <input type="text" name="search" id="searchInput" placeholder="Busque pelo nome do profissional" value="<?php echo htmlspecialchars($search); ?>" class="search-field">
+                <select name="profissao" class="search-field" aria-label="Filtrar por um profissão">
                     <option value="">Filtrar por profissão...</option>
                     <?php
                     // Verifica se a variável existe e se há linhas
@@ -79,19 +79,21 @@ $todas_as_profissoes = getProfissoesComContagem($conn)
                     }
                     ?>
                 </select>
-                <button type="submit" class="search-button" aria-label="Buscar prestadores de serviço">
-                    <i class="fas fa-search"></i> Buscar
-                </button>
-                <?php
-                // Só exibe o botão de limpar se um dos filtros estiver ativo
-                if (!empty($search) || !empty($selectedProfissao)):
-                ?>
-                    <a href="index.php" class="clear-filter-btn" title="Remover todos os filtros">
-                        <i class="fas fa-times"></i> Limpar
-                    </a>
-                <?php 
-                endif;
-                ?>
+                <div class="search-actions-container">
+                    <button type="submit" class="search-button" aria-label="Buscar prestadores de serviço">
+                        <i class="fas fa-search"></i> Buscar
+                    </button>
+                    <?php
+                    // Só exibe o botão de limpar se um dos filtros estiver ativo
+                    if (!empty($search) || !empty($selectedProfissao)):
+                    ?>
+                        <a href="index.php" class="clear-filter-btn" title="Remover todos os filtros">
+                            <i class="fas fa-times"></i> Limpar
+                        </a>
+                    <?php 
+                    endif;
+                    ?>
+                </div>
             </form>
 
             <?php if ($showCategories): ?>
@@ -173,7 +175,7 @@ $todas_as_profissoes = getProfissoesComContagem($conn)
                                 // MODIFICAÇÃO 2: Botão para Enviar E-mail (sem expor o e-mail)
                                 if (!empty($row['email'])) {
                                     echo "<a href='mailto:" . htmlspecialchars($row['email']) . "' class='contact-button email-button' title='Enviar um e-mail'>
-                                            <i class='fas fa-envelope'></i> Enviar E-mail
+                                            <i class='fas fa-envelope'></i>E-mail
                                         </a>";
                                 }
 
@@ -182,7 +184,7 @@ $todas_as_profissoes = getProfissoesComContagem($conn)
                                     // Codifica o endereço para ser usado em uma URL de forma segura
                                     $endereco_url = urlencode($row['endereco']);
                                     echo "<a href='https://www.google.com/maps/search/?api=1&query=" . $endereco_url . "' target='_blank' class='contact-button maps-button' title='Ver endereço no mapa'>
-                                            <i class='fas fa-map-marker-alt'></i> Ver no Mapa
+                                            <i class='fas fa-map-marker-alt'></i> Endereço
                                         </a>";
                                 }
 
